@@ -606,6 +606,7 @@ CONTEXT:
 - Topics: ${topicsList}
 - Grade Level: ${args.difficulty}
 - Total Questions: ${args.count}
+- Target approximately ${questionsPerTopic} questions per topic
 - Questions should be distributed across the topics proportionally
 
 QUESTION TYPE MIX:
