@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, Plus, BookOpen, Tag, Clock, CheckCircle2, XCircle, Loader2, Sparkles, Trash2, Eye } from "lucide-react";
+import { Search, BookOpen, Tag, CheckCircle2, Eye } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useAuth } from "@/hooks/AuthProvider";
@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardHeader,
-  CardTitle,
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
@@ -56,7 +55,7 @@ const QuestionBank = () => {
   const bankQuery: any = { isPublished: true };
   if (filterType !== "all") bankQuery.type = filterType;
   if (filterDifficulty !== "all") bankQuery.difficulty = filterDifficulty;
-  if (filterSubject !== "all") bankSubject.subject = filterSubject;
+  if (filterSubject !== "all") bankQuery.subjectId = filterSubject;
 
   const questionBank = useQuery(api.exams.getQuestionBank, bankQuery) || [];
 
