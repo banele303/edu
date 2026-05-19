@@ -51,7 +51,12 @@ export default defineSchema({
     code: v.string(),
     teacher: v.optional(v.array(v.id("users"))),
     isActive: v.boolean(),
-  }).index("by_code", ["code"]),
+    // Category determines which question types are recommended
+    // "maths", "science", "language", "humanities", "life_skills", "arts", "technology", "other"
+    category: v.optional(v.string()),
+    grade: v.optional(v.number()),
+  }).index("by_code", ["code"])
+    .index("by_category", ["category"]),
 
   timetables: defineTable({
     class: v.id("classes"),
@@ -101,16 +106,51 @@ export default defineSchema({
     duration: v.number(),
     dueDate: v.string(),
     isActive: v.boolean(),
+    // "quiz" = self-paced student practice, "exam" = formal timed assessment
+    examType: v.union(v.literal("quiz"), v.literal("exam")),
+    // For quizzes: allow multiple attempts
+    maxAttempts: v.optional(v.number()),
+    // For quizzes: show instant feedback after each question
+    instantFeedback: v.optional(v.boolean()),
+    // Syllabus topics this exam covers
+    syllabusTopics: v.optional(v.array(v.string())),
+    // Subject category for question type recommendations
+    subjectCategory: v.optional(v.string()),
+    // Total points (computed)
+    totalPoints: v.optional(v.number()),
+    // Exam template used (if any)
+    templateUsed: v.optional(v.string()),
     questions: v.array(
       v.object({
         questionText: v.string(),
-        type: v.union(v.literal("MCQ"), v.literal("SHORT_ANSWER")),
+        type: v.union(
+          v.literal("MCQ"),
+          v.literal("SHORT_ANSWER"),
+          v.literal("ESSAY"),
+          v.literal("TRUE_FALSE"),
+          v.literal("FILL_BLANK"),
+          v.literal("MATCH_COLUMN"),
+          v.literal("CALCULATION"),
+          v.literal("DIAGRAM_LABEL")
+        ),
         options: v.optional(v.array(v.string())),
         correctAnswer: v.string(),
         points: v.number(),
+        // Which syllabus topic this question tests
+        topic: v.optional(v.string()),
+        // Difficulty per question
+        difficulty: v.optional(v.string()),
+        // For MATCH_COLUMN: pairs of items
+        matchPairs: v.optional(v.array(v.object({ left: v.string(), right: v.string() }))),
+        // For DIAGRAM_LABEL: image URL
+        diagramUrl: v.optional(v.string()),
+        // Source question bank ID if reused
+        bankQuestionId: v.optional(v.string()),
       })
     ),
-  }),
+  }).index("by_type", ["examType"])
+    .index("by_teacher_type", ["teacher", "examType"])
+    .index("by_class_type", ["class", "examType"]),
 
   submissions: defineTable({
     exam: v.id("exams"),
@@ -123,7 +163,64 @@ export default defineSchema({
     ),
     score: v.number(),
     aiFeedback: v.optional(v.string()),
+    // Track attempt number for quizzes
+    attemptNumber: v.optional(v.number()),
   }),
+
+  // Reusable question bank — questions generated or manually added
+  questionBank: defineTable({
+    questionText: v.string(),
+    type: v.union(
+      v.literal("MCQ"),
+      v.literal("SHORT_ANSWER"),
+      v.literal("ESSAY"),
+      v.literal("TRUE_FALSE"),
+      v.literal("FILL_BLANK"),
+      v.literal("MATCH_COLUMN"),
+      v.literal("CALCULATION"),
+      v.literal("DIAGRAM_LABEL")
+    ),
+    options: v.optional(v.array(v.string())),
+    correctAnswer: v.string(),
+    points: v.number(),
+    topic: v.optional(v.string()),
+    subTopic: v.optional(v.string()),
+    difficulty: v.optional(v.string()),
+    subject: v.optional(v.id("subjects")),
+    grade: v.optional(v.number()),
+    matchPairs: v.optional(v.array(v.object({ left: v.string(), right: v.string() }))),
+    diagramUrl: v.optional(v.string()),
+    createdBy: v.id("users"),
+    timesUsed: v.optional(v.number()),
+    tags: v.array(v.string()),
+    isPublished: v.boolean(),
+  }).index("by_subject", ["subject"])
+    .index("by_topic", ["topic"])
+    .index("by_type", ["type"])
+    .index("by_created_by", ["createdBy"])
+    .index("by_published", ["isPublished"]),
+
+  // Exam templates for quick generation
+  examTemplates: defineTable({
+    name: v.string(),
+    description: v.string(),
+    icon: v.string(),
+    // Template config
+    examType: v.union(v.literal("quiz"), v.literal("exam")),
+    defaultDuration: v.number(),
+    defaultQuestionCount: v.number(),
+    questionTypeMix: v.array(v.object({
+      type: v.string(),
+      count: v.number(),
+      points: v.number(),
+    })),
+    defaultDifficulty: v.string(),
+    // Which subject categories this template is best for
+    recommendedFor: v.array(v.string()),
+    isSystem: v.boolean(), // built-in vs custom
+    createdBy: v.optional(v.id("users")),
+  }).index("by_type", ["examType"])
+    .index("by_system", ["isSystem"]),
 
   activitieslog: defineTable({
     user: v.id("users"),

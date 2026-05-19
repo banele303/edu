@@ -115,7 +115,8 @@ export const sidebardata = {
       roles: ["teacher", "student", "admin"],
       items: [
         { title: "Assignments", url: "/lms/assignments" },
-        { title: "Exams", url: "/lms/exams" },
+        { title: "Assessments", url: "/lms/exams" },
+        { title: "Question Bank", url: "/lms/question-bank", roles: ["teacher", "admin"] },
         { title: "Study Materials", url: "/lms/materials" },
       ],
     },

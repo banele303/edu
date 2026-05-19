@@ -10,6 +10,7 @@ import {
   Printer,
   Sparkles,
   CheckCircle2,
+  ChevronRight,
 } from "lucide-react";
 
 import { useAuth } from "@/hooks/AuthProvider";
@@ -20,6 +21,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import ExamRadio from "@/components/lms/ExamRadio";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +39,8 @@ const Exam = () => {
   const convexExam = useQuery(api.exams.getExam, id ? { id: id as any } : "skip");
   const convexSubmissions = useQuery(api.submissions.getSubmissions, id ? { examId: id as any } : "skip");
   const submitConvexExam = useMutation(api.submissions.submitExam);
+  const toggleExam = useMutation(api.exams.toggleExamActive);
+  const deleteExamM = useMutation(api.exams.deleteExam);
   
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -62,7 +69,9 @@ const Exam = () => {
     }
   }, [isStudent, convexSubmissions]);
 
-  const totalPoints = submission && exam ? exam.questions.length : 0;
+  const totalPoints = exam
+    ? (exam.totalPoints || exam.questions.reduce((s: number, q: any) => s + (q.points || 0), 0))
+    : 0;
   const percentage =
     submission && totalPoints > 0
       ? Math.round((submission.score / totalPoints) * 100)
@@ -113,23 +122,50 @@ const Exam = () => {
   const handleStudentSubmit = async () => {
     if (!exam) return;
 
-    if (Object.keys(answers).length < exam.questions.length) {
-      toast.error("Please answer all questions before submitting.");
+    // Build answer payload — map each question to its answer
+    const payload: { questionId: string; answer: string }[] = [];
+    let unanswered = 0;
+
+    for (const q of exam.questions) {
+      if (q.type === "MATCH_COLUMN" && q.matchPairs) {
+        // For match column, include each pair's answer
+        for (let i = 0; i < q.matchPairs.length; i++) {
+          const matchKey = `${q._id}_${i}`;
+          const ans = answers[matchKey] || "";
+          if (!ans) unanswered++;
+          payload.push({
+            questionId: `${q.questionText} [${q.matchPairs[i].left}]`,
+            answer: ans,
+          });
+        }
+      } else {
+        const ans = answers[q._id] || "";
+        if (!ans) unanswered++;
+        payload.push({
+          questionId: q.questionText,
+          answer: ans,
+        });
+      }
+    }
+
+    if (unanswered > 0) {
+      toast.error(`Please answer all questions. ${unanswered} unanswered.`);
       return;
     }
 
     try {
       setSubmitting(true);
-      const payload = Object.entries(answers).map(([qId, ans]) => ({
-        questionId: qId,
-        answer: ans,
-      }));
 
       const data = await submitConvexExam({
         examId: id as any,
         answers: payload,
       });
-      toast.success(`Exam submitted! Score: ${data.score}`);
+
+      const msg = exam.examType === "quiz"
+        ? `Quiz submitted! Score: ${data.score}/${exam.totalPoints || exam.questions.reduce((s: number, q: any) => s + (q.points || 0), 0)} (Attempt ${data.attemptNumber})`
+        : `Exam submitted! Score: ${data.score}/${exam.totalPoints || exam.questions.reduce((s: number, q: any) => s + (q.points || 0), 0)}`;
+
+      toast.success(msg);
       navigate("/lms/exams");
     } catch (error: any) {
       toast.error(error.message || "Submission failed");
@@ -140,9 +176,21 @@ const Exam = () => {
 
   const handleToggleStatus = async () => {
     try {
-      toast.error("Toggle exam status not implemented yet");
+      const result = await toggleExam({ examId: id as any });
+      toast.success(`Now ${result.isActive ? "Active" : "Inactive"}`);
     } catch (error: any) {
       toast.error(error.message || "Failed to update status");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm("Delete this assessment? This cannot be undone.")) return;
+    try {
+      await deleteExamM({ examId: id as any });
+      toast.success("Deleted");
+      navigate("/lms/exams");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete");
     }
   };
 
@@ -187,7 +235,12 @@ const Exam = () => {
       {/* Header Section */}
       <div className="space-y-2 no-print">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">{exam.title}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold">{exam.title}</h1>
+            <Badge variant={exam.examType === "quiz" ? "secondary" : "default"}>
+              {exam.examType === "quiz" ? "Quiz" : "Exam"}
+            </Badge>
+          </div>
           <Badge variant={exam.isActive ? "default" : "secondary"}>
             {exam.isActive ? "Active" : "Draft"}
           </Badge>
@@ -200,7 +253,33 @@ const Exam = () => {
             <Calendar className="h-4 w-4" /> Due:{" "}
             {new Date(exam.dueDate).toLocaleDateString()}
           </div>
+          <div className="flex items-center gap-1">
+            {exam.questions.length} questions • {exam.totalPoints || exam.questions.reduce((acc: number, cur: any) => acc + (cur.points || 0), 0)} pts
+          </div>
         </div>
+        {/* Quiz info */}
+        {exam.examType === "quiz" && (
+          <div className="flex gap-2">
+            {exam.maxAttempts && (
+              <Badge variant="outline" className="text-xs">
+                Max {exam.maxAttempts} attempts
+              </Badge>
+            )}
+            {exam.instantFeedback && (
+              <Badge variant="outline" className="text-xs">
+                Instant feedback
+              </Badge>
+            )}
+          </div>
+        )}
+        {/* Topics */}
+        {exam.syllabusTopics && exam.syllabusTopics.length > 0 && (
+          <div className="flex gap-1 flex-wrap">
+            {exam.syllabusTopics.map((t: string) => (
+              <Badge key={t} variant="outline" className="text-xs">{t}</Badge>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Printable Exam Paper Header (Standard CAPS Curriculum Assessment Layout) */}
@@ -241,8 +320,8 @@ const Exam = () => {
               >
                 {exam.isActive ? "Unpublish Exam" : "Publish Exam"}
               </Button>
-              <Button variant="destructive" onClick={handleTeacherDelete}>
-                Delete Exam
+              <Button variant="destructive" onClick={handleDelete}>
+                Delete
               </Button>
             </div>
           </div>
@@ -259,7 +338,9 @@ const Exam = () => {
                 <Award className="h-8 w-8 text-yellow-600" />
               </div>
               <div className="text-center">
-                <h1 className="text-3xl font-bold">Exam Results</h1>
+                <h1 className="text-3xl font-bold">
+                  {exam.examType === "quiz" ? "Quiz Results" : "Exam Results"}
+                </h1>
                 <p className="text-muted-foreground">You scored</p>
               </div>
               <div className="flex items-baseline gap-2">
@@ -276,15 +357,21 @@ const Exam = () => {
               >
                 {percentage}%
               </Badge>
+              {exam.examType === "quiz" && submission.attemptNumber && (
+                <Badge variant="outline" className="text-xs">
+                  Attempt {submission.attemptNumber}
+                  {exam.maxAttempts ? ` of ${exam.maxAttempts}` : ""}
+                </Badge>
+              )}
             </CardContent>
           </Card>
           <div className="flex items-center gap-2 mt-4">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate("/lms/quizzes")}
+              onClick={() => navigate("/lms/exams")}
             >
-              <ArrowLeft className="h-4 w-4 mr-2" /> Back to Quizzes
+              <ArrowLeft className="h-4 w-4 mr-2" /> Back to List
             </Button>
             <h2 className="text-xl font-semibold ml-auto">Review Answers</h2>
           </div>
@@ -361,17 +448,246 @@ const Exam = () => {
               <CardTitle className="text-lg font-medium flex gap-2 items-start print:text-sm print:font-bold">
                 <span className="text-muted-foreground print:text-black">{index + 1}.</span>
                 <span className="flex-1">{q.questionText}</span>
-                <span className="text-xs font-normal text-muted-foreground bg-secondary px-2 py-1 rounded print:bg-transparent print:text-black print:font-extrabold print:border print:border-black shrink-0">
-                  {q.points} pts
-                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  {q.topic && (
+                    <span className="text-[10px] font-normal text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                      {q.topic}
+                    </span>
+                  )}
+                  <span className="text-xs font-normal text-muted-foreground bg-secondary px-2 py-1 rounded print:bg-transparent print:text-black print:font-extrabold print:border print:border-black">
+                    {q.points} pts
+                  </span>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="print:pt-1">
-              {q.type === "SHORT_ANSWER" ? (
-                // SHORT ANSWER / ESSAY FORMAT
+              {/* ─── MCQ ─────────────────────────── */}
+              {q.type === "MCQ" && (
+                <div>
+                  {isTeacher ? (
+                    <ul className="space-y-2 print:space-y-1">
+                      {q.options?.map((opt: string, i: number) => (
+                        <li key={i} className={`p-3 rounded-md border flex items-center gap-2 print:text-xs print:p-1.5 ${opt === q.correctAnswer ? "bg-primary font-medium print:bg-zinc-200 print:border-black print:font-bold" : "bg-black/20 dark:bg-black/70 print:bg-transparent"}`}>
+                          {opt === q.correctAnswer && <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />}
+                          <span className="text-sm print:text-xs">{opt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="no-print">
+                      <ExamRadio answers={answers} question={q} setAnswers={setAnswers} submission={submission as any} />
+                    </div>
+                  )}
+                  {!isTeacher && !submission && (
+                    <ul className="hidden print:block space-y-1.5 mt-2">
+                      {q.options?.map((opt: string, i: number) => (
+                        <li key={i} className="flex items-center gap-2 text-xs">
+                          <span className="w-3.5 h-3.5 rounded-full border border-black inline-block shrink-0" />
+                          <span>{opt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+
+              {/* ─── TRUE / FALSE ────────────────── */}
+              {q.type === "TRUE_FALSE" && (
+                <div>
+                  {isTeacher ? (
+                    <div className="flex gap-3">
+                      {["True", "False"].map((opt) => (
+                        <div key={opt} className={`p-3 rounded-md border flex items-center gap-2 ${opt === q.correctAnswer ? "bg-green-50 border-green-500 dark:bg-green-900/20 font-medium" : "bg-black/20 dark:bg-black/70"}`}>
+                          {opt === q.correctAnswer && <CheckCircle2 className="h-4 w-4 text-green-600" />}
+                          <span className="text-sm">{opt}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-print space-y-2">
+                      {["True", "False"].map((opt) => (
+                        <button
+                          key={opt}
+                          disabled={!!submission}
+                          onClick={() => { if (!submission) setAnswers(prev => ({ ...prev, [q._id]: opt })); }}
+                          className={`w-full text-left p-3 rounded-md border flex items-center gap-2 transition-all ${
+                            submission
+                              ? opt === q.correctAnswer
+                                ? "bg-green-50 border-green-500 dark:bg-green-900/20"
+                                : submission?.answers.find(a => a.questionId === q._id)?.answer === opt
+                                  ? "bg-red-50 border-red-500 dark:bg-red-900/20"
+                                  : "opacity-50"
+                              : answers[q._id] === opt
+                                ? "border-primary bg-primary/5"
+                                : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                          }`}
+                        >
+                          <span className="w-4 h-4 rounded-full border-2 border-current shrink-0 flex items-center justify-center">
+                            {(answers[q._id] === opt || (submission && submission.answers.find(a => a.questionId === q._id)?.answer === opt)) && (
+                              <span className="w-2 h-2 rounded-full bg-current" />
+                            )}
+                          </span>
+                          <span className="text-sm">{opt}</span>
+                          {submission && opt === q.correctAnswer && <CheckCircle2 className="h-4 w-4 text-green-600 ml-auto" />}
+                          {submission && opt !== q.correctAnswer && submission?.answers.find(a => a.questionId === q._id)?.answer === opt && (
+                            <span className="ml-auto text-xs text-red-500 font-medium">Your answer</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── FILL IN THE BLANK ───────────── */}
+              {q.type === "FILL_BLANK" && (
+                <div>
+                  {isTeacher ? (
+                    <div className="p-4 bg-muted/50 dark:bg-[#1c1c1c] border rounded-lg">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">Correct Answer:</span>
+                      <p className="text-sm font-medium">{q.correctAnswer}</p>
+                    </div>
+                  ) : (
+                    <div className="no-print">
+                      <Input
+                        placeholder="Type your answer..."
+                        className="text-sm"
+                        value={submission ? (submission.answers.find(a => a.questionId === q._id)?.answer || "") : (answers[q._id] || "")}
+                        onChange={(e) => { if (!submission) setAnswers(prev => ({ ...prev, [q._id]: e.target.value })); }}
+                        disabled={!!submission}
+                      />
+                      {submission && (
+                        <div className={`mt-2 p-3 rounded-md text-sm ${submission.answers.find(a => a.questionId === q._id)?.answer?.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase() ? "bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800" : "bg-amber-50 border border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"}`}>
+                          <span className="font-medium">Correct answer: </span>{q.correctAnswer}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── CALCULATION ─────────────────── */}
+              {q.type === "CALCULATION" && (
+                <div>
+                  {isTeacher ? (
+                    <div className="p-4 bg-muted/50 dark:bg-[#1c1c1c] border rounded-lg">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">Expected Result:</span>
+                      <p className="text-sm font-medium font-mono">{q.correctAnswer}</p>
+                    </div>
+                  ) : (
+                    <div className="no-print">
+                      <Input
+                        placeholder="Enter your calculated answer..."
+                        className="text-sm font-mono"
+                        value={submission ? (submission.answers.find(a => a.questionId === q._id)?.answer || "") : (answers[q._id] || "")}
+                        onChange={(e) => { if (!submission) setAnswers(prev => ({ ...prev, [q._id]: e.target.value })); }}
+                        disabled={!!submission}
+                      />
+                      {submission && (
+                        <div className={`mt-2 p-3 rounded-md text-sm ${submission.answers.find(a => a.questionId === q._id)?.answer?.trim() === q.correctAnswer.trim() ? "bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800" : "bg-amber-50 border border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"}`}>
+                          <span className="font-medium">Correct answer: </span>
+                          <span className="font-mono">{q.correctAnswer}</span>
+                        </div>
+                      )}
+                      {printIncludeLines && (
+                        <div className="hidden print:block space-y-4 pt-4">
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── MATCH COLUMN ────────────────── */}
+              {q.type === "MATCH_COLUMN" && q.matchPairs && (
+                <div>
+                  {isTeacher ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-2">Column A</span>
+                        <ul className="space-y-1">
+                          {q.matchPairs.map((p: any, i: number) => (
+                            <li key={i} className="p-2 bg-muted/50 rounded text-sm">{p.left}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-2">Column B</span>
+                        <ul className="space-y-1">
+                          {q.matchPairs.map((p: any, i: number) => (
+                            <li key={i} className="p-2 bg-green-50 dark:bg-green-900/20 rounded text-sm border border-green-200 dark:border-green-800">
+                              {p.right}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="no-print space-y-3">
+                      <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
+                        {q.matchPairs.map((p: any, i: number) => {
+                          const matchKey = `${q._id}_${i}`;
+                          return (
+                            <div key={i} className="contents">
+                              <div className="p-2 bg-muted/50 rounded text-sm">{p.left}</div>
+                              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                              <Select
+                                value={answers[matchKey] || ""}
+                                onValueChange={(val) => { if (!submission) setAnswers(prev => ({ ...prev, [matchKey]: val })); }}
+                                disabled={!!submission}
+                              >
+                                <SelectTrigger className="text-sm">
+                                  <SelectValue placeholder="Match..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {q.matchPairs.map((mp: any, j: number) => (
+                                    <SelectItem key={j} value={mp.right}>{mp.right}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── DIAGRAM LABEL ───────────────── */}
+              {q.type === "DIAGRAM_LABEL" && (
+                <div>
+                  {q.diagramUrl && (
+                    <div className="mb-4">
+                      <img src={q.diagramUrl} alt="Diagram" className="max-w-full rounded border" />
+                    </div>
+                  )}
+                  {isTeacher ? (
+                    <div className="p-4 bg-muted/50 dark:bg-[#1c1c1c] border rounded-lg">
+                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">Labeling Guide:</span>
+                      <p className="text-sm">{q.correctAnswer}</p>
+                    </div>
+                  ) : (
+                    <div className="no-print">
+                      <Textarea
+                        placeholder="Describe the diagram labels..."
+                        className="min-h-[80px] text-sm"
+                        value={submission ? (submission.answers.find(a => a.questionId === q._id)?.answer || "") : (answers[q._id] || "")}
+                        onChange={(e) => { if (!submission) setAnswers(prev => ({ ...prev, [q._id]: e.target.value })); }}
+                        disabled={!!submission}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── SHORT ANSWER / ESSAY ────────── */}
+              {(q.type === "SHORT_ANSWER" || q.type === "ESSAY") && (
                 <div className="space-y-3 print:space-y-0">
                   {isTeacher ? (
-                    // Teacher view: Show memorandum guide
                     <div className="p-4 bg-muted/50 dark:bg-[#1c1c1c] border rounded-lg space-y-1.5 print:bg-transparent print:border-black">
                       <span className="text-xs font-bold text-muted-foreground print:text-black uppercase tracking-wider block">
                         📝 Model Solution / Grading Guidelines:
@@ -381,85 +697,45 @@ const Exam = () => {
                       </p>
                     </div>
                   ) : (
-                    // Student view: Show Textarea for inputs
                     <div className="space-y-3 no-print">
                       <Textarea
-                        placeholder={submission ? "No answer written" : "Type your detailed explanation or essay response here..."}
-                        className="min-h-[120px] bg-background/50 border-muted focus:border-primary transition-all resize-y text-sm leading-relaxed"
+                        placeholder={q.type === "ESSAY" ? "Write your essay response here..." : "Type your answer..."}
+                        className={`bg-background/50 border-muted focus:border-primary transition-all resize-y text-sm leading-relaxed ${q.type === "ESSAY" ? "min-h-[200px]" : "min-h-[100px]"}`}
                         value={submission ? (submission.answers.find(a => a.questionId === q._id)?.answer || "") : (answers[q._id] || "")}
-                        onChange={(e) => {
-                          if (submission) return;
-                          setAnswers(prev => ({ ...prev, [q._id]: e.target.value }));
-                        }}
+                        onChange={(e) => { if (!submission) setAnswers(prev => ({ ...prev, [q._id]: e.target.value })); }}
                         disabled={!!submission}
                       />
                       {submission && (
                         <div className="mt-3 p-4 bg-violet-600/10 dark:bg-violet-600/5 border border-violet-600/20 rounded-lg space-y-1.5">
                           <div className="text-xs font-bold text-violet-600 uppercase tracking-wider flex items-center gap-1.5">
-                            <Sparkles className="w-3.5 h-3.5" /> Correct Answer / Model Guide:
+                            <Sparkles className="w-3.5 h-3.5" /> Model Answer:
                           </div>
-                          <p className="text-sm leading-relaxed text-foreground/90 italic">
-                            {q.correctAnswer}
-                          </p>
+                          <p className="text-sm leading-relaxed text-foreground/90 italic">{q.correctAnswer}</p>
                         </div>
                       )}
                     </div>
                   )}
-
-                  {/* Printed handwriting lines helper */}
                   {printIncludeLines && (
                     <div className="hidden print:block space-y-4 pt-4">
-                      <div className="border-b border-dashed border-gray-400 h-6"></div>
-                      <div className="border-b border-dashed border-gray-400 h-6"></div>
-                      <div className="border-b border-dashed border-gray-400 h-6"></div>
-                      <div className="border-b border-dashed border-gray-400 h-6"></div>
+                      {q.type === "ESSAY" ? (
+                        <>
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                        </>
+                      ) : (
+                        <>
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                          <div className="border-b border-dashed border-gray-400 h-6" />
+                        </>
+                      )}
                     </div>
-                  )}
-                </div>
-              ) : (
-                // MULTIPLE CHOICE MCQ FORMAT
-                <div>
-                  {isTeacher ? (
-                    // TEACHER VIEW: List options, highlight correct one
-                    <ul className="space-y-2 print:space-y-1">
-                      {q.options?.map((opt: string, i: number) => (
-                        <li
-                          key={i}
-                          className={`p-3 rounded-md border flex items-center gap-2 print:text-xs print:p-1.5 ${
-                            opt === q.correctAnswer
-                              ? "bg-primary font-medium print:bg-zinc-200 print:border-black print:font-bold"
-                              : "bg-black/20 dark:bg-black/70 print:bg-transparent"
-                          }`}
-                        >
-                          {opt === q.correctAnswer && (
-                            <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-                          )}
-                          <span className="text-sm print:text-xs">{opt}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    // STUDENT VIEW: Radio Group
-                    <div className="no-print">
-                      <ExamRadio
-                        answers={answers}
-                        question={q}
-                        setAnswers={setAnswers}
-                        submission={submission as any}
-                      />
-                    </div>
-                  )}
-
-                  {/* Printable view simple options list */}
-                  {!isTeacher && !submission && (
-                    <ul className="hidden print:block space-y-1.5 mt-2">
-                      {q.options?.map((opt: string, i: number) => (
-                        <li key={i} className="flex items-center gap-2 text-xs">
-                          <span className="w-3.5 h-3.5 rounded-full border border-black inline-block shrink-0"></span>
-                          <span>{opt}</span>
-                        </li>
-                      ))}
-                    </ul>
                   )}
                 </div>
               )}

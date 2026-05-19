@@ -18,37 +18,55 @@ export interface user {
 
 export interface academicYear {
   _id: string;
-  name: string; // "2024-2025"
-  fromYear: Date; // "2024-09-01"
-  toYear: Date; // "2025-06-30"
-  isCurrent: boolean; // true/false
+  name: string;
+  fromYear: Date;
+  toYear: Date;
+  isCurrent: boolean;
 }
 
 export interface Class {
   _id: string;
-  name: string; // e.g., "Grade 10"
-  academicYear: academicYear; // Link to "2024-2025"
-  classTeacher: user; // The main teacher in charge
-  subjects: subject[]; // List of subjects taught in this class
-  students: user[]; // List of students enrolled
-  capacity: number; // Max students allowed (optional)
+  name: string;
+  academicYear: academicYear;
+  classTeacher: user;
+  subjects: subject[];
+  students: user[];
+  capacity: number;
 }
 
 export interface subject {
   _id: string;
-  name: string; // "Mathematics"
-  code: string; // "MATH101"
-  teacher?: user[]; // Default teacher for this subject
-  isActive: boolean; // Indicates if the subject is currently active
+  name: string;
+  code: string;
+  teacher?: user[];
+  isActive: boolean;
+  category?: string; // "maths", "science", "language", "humanities", "life_skills", "arts", "technology", "other"
+  grade?: number;
 }
+
+// All supported question types
+export type QuestionType =
+  | "MCQ"
+  | "SHORT_ANSWER"
+  | "ESSAY"
+  | "TRUE_FALSE"
+  | "FILL_BLANK"
+  | "MATCH_COLUMN"
+  | "CALCULATION"
+  | "DIAGRAM_LABEL";
 
 export interface question {
   _id: string;
   questionText: string;
-  type: string;
-  options: string[]; // Array of strings e.g. ["A", "B", "C", "D"]
-  correctAnswer: string; // Hidden from students in default queries
+  type: QuestionType | string;
+  options: string[];
+  correctAnswer: string;
   points: number;
+  topic?: string;
+  difficulty?: string;
+  matchPairs?: { left: string; right: string }[];
+  diagramUrl?: string;
+  bankQuestionId?: string;
 }
 
 export interface exam {
@@ -57,28 +75,72 @@ export interface exam {
   subject: subject;
   class: Class;
   teacher: user;
-  duration: number; // in minutes
+  duration: number;
   questions: question[];
   dueDate: Date;
   isActive: boolean;
+  examType: "quiz" | "exam";
+  maxAttempts?: number;
+  instantFeedback?: boolean;
+  syllabusTopics?: string[];
+  subjectCategory?: string;
+  totalPoints?: number;
+  templateUsed?: string;
 }
 
 export interface Submission {
   _id: string;
   score: number;
-  exam: exam; // The populated exam with answers
+  exam: exam;
   answers: { questionId: string; answer: string }[];
+  attemptNumber?: number;
+  aiFeedback?: string;
 }
 
 export interface period {
   _id: string;
   subject: { _id: string; name: string; code: string };
   teacher: { _id: string; name: string };
-  startTime: string; // e.g., "08:00"
-  endTime: string; // e.g., "08:45"
+  startTime: string;
+  endTime: string;
 }
 
 export interface schedule {
-  day: string; // "Monday", "Tuesday", etc.
+  day: string;
   periods: period[];
+}
+
+// Question Bank types
+export interface BankQuestion {
+  _id: string;
+  questionText: string;
+  type: QuestionType | string;
+  options: string[];
+  correctAnswer: string;
+  points: number;
+  topic?: string;
+  subTopic?: string;
+  difficulty?: string;
+  subject?: string;
+  grade?: number;
+  matchPairs?: { left: string; right: string }[];
+  diagramUrl?: string;
+  createdBy: string;
+  timesUsed?: number;
+  tags: string[];
+  isPublished: boolean;
+}
+
+// Exam Template types
+export interface ExamTemplate {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  examType: "quiz" | "exam";
+  defaultDuration: number;
+  defaultQuestionCount: number;
+  questionTypeMix: { type: string; count: number; points: number }[];
+  defaultDifficulty: string;
+  recommendedFor: string[];
 }

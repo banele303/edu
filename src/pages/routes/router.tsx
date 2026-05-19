@@ -21,6 +21,7 @@ import FeesPage from "@/pages/finance/fees";
 import ExpensesPage from "@/pages/finance/expenses";
 import AssignmentsPage from "@/pages/lms/Assignments";
 import MaterialsPage from "@/pages/lms/Materials";
+import QuestionBank from "@/pages/lms/QuestionBank";
 import SalaryPage from "@/pages/finance/salary";
 import AnnouncementsPage from "@/pages/Announcements";
 import EventsCalendar from "@/pages/EventsCalendar";
@@ -88,6 +89,7 @@ export const router = createBrowserRouter([
       { path: "lms/assignments/:id", element: <AssignmentDetails /> },
       { path: "lms/exams", element: <Exams /> },
       { path: "lms/exams/:id", element: <Exam /> },
+      { path: "lms/question-bank", element: <QuestionBank /> },
       { path: "lms/materials", element: <MaterialsPage /> },
 
       // Finance
