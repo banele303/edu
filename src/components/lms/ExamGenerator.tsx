@@ -400,19 +400,40 @@ const ExamGenerator = ({ open, onOpenChange, onSuccess }: Props) => {
     try {
       setLoading(true);
 
-      await generateExamAction({
+      const mix = questionMix.filter((m) => m.count > 0);
+      const payload = {
         subjectId: values.subject as any,
         classId: values.class as any,
         topics: values.topics,
+        topic: values.topics.join(", "),
         difficulty: values.difficulty,
         count: totalQuestions,
         title: values.title,
         examType: values.examType,
-        questionTypeMix: questionMix.filter((m) => m.count > 0),
+        questionTypeMix: mix,
         templateUsed: selectedTemplate || undefined,
         maxAttempts: values.maxAttempts,
         instantFeedback: values.instantFeedback,
-      });
+      };
+
+      try {
+        await generateExamAction(payload);
+      } catch (err: any) {
+        const msg = err?.message || "";
+        if (msg.includes("topic") && msg.includes("ArgumentValidation")) {
+          await generateExamAction({
+            subjectId: payload.subjectId,
+            classId: payload.classId,
+            topic: payload.topic,
+            difficulty: payload.difficulty,
+            count: payload.count,
+            title: payload.title,
+            questionType: mix[0]?.type ?? "MCQ",
+          });
+        } else {
+          throw err;
+        }
+      }
 
       toast.success(
         `AI is generating your ${values.examType === "quiz" ? "quiz" : "exam"}! Check back in a moment.`
