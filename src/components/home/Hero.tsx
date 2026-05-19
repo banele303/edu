@@ -74,7 +74,7 @@ const Hero = () => {
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-2xl group">
               <img
-                src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1200"
+                src="/hero_learners.png"
                 alt="South African school learners"
                 className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-110"
               />

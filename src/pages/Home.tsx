@@ -2,18 +2,25 @@ import Navbar from "@/components/home/Navbar";
 import Hero from "@/components/home/Hero";
 import Stats from "@/components/home/Stats";
 import Programs from "@/components/home/Programs";
+import Features from "@/components/home/Features";
+import HowItWorks from "@/components/home/HowItWorks";
+import Testimonials from "@/components/home/Testimonials";
+import Blog from "@/components/home/Blog";
+import PricingPreview from "@/components/home/PricingPreview";
+import Newsletter from "@/components/home/Newsletter";
+import FAQPreview from "@/components/home/FAQPreview";
 import Footer from "@/components/home/Footer";
 import { Link } from "react-router";
 
 const Home = () => {
   return (
-    <div>
+    <div className="bg-white dark:bg-[#121212]">
       <Navbar />
-      <main className="">
+      <main className="flex flex-col min-h-screen">
         <Hero />
 
         {/* Partners / DoE Logos */}
-        <section className="py-12 border-y border-gray-200 dark:border-gray-800">
+        <section className="py-12 border-y border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#0f0f0f]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <p className="text-center text-gray-500 text-sm font-bold uppercase tracking-widest mb-8">
               Trusted by Schools Across South Africa
@@ -38,58 +45,49 @@ const Home = () => {
           </div>
         </section>
 
-        <Stats />
+        <HowItWorks />
+        <Features />
         <Programs />
-
-        {/* Testimonial Highlight */}
-        <section className="py-24 bg-white dark:bg-[#121212] overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-[#3ecf8e]/5 blur-[100px] rounded-full"></div>
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <div className="mb-8 flex justify-center">
-              <div className="w-16 h-1 bg-[#3ecf8e] rounded-full"></div>
-            </div>
-            <h3 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-10 leading-tight">
-              "EduNexus transformed how we manage our school. Our teachers spend
-              less time on admin and more time in the classroom."
-            </h3>
-            <div className="flex flex-col items-center">
-              <img
-                src="https://picsum.photos/seed/za-principal/100/100"
-                alt="Principal"
-                className="w-20 h-20 rounded-full border-4 border-[#3ecf8e] mb-4 object-cover"
-              />
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
-                Mrs. Nomsa Dlamini
-              </p>
-              <p className="text-[#3ecf8e] font-medium">
-                Principal — Ekurhuleni Secondary School, Gauteng
-              </p>
-            </div>
-          </div>
-        </section>
+        <Stats />
+        <Testimonials />
+        <PricingPreview />
+        <FAQPreview />
+        <Blog />
+        <Newsletter />
 
         {/* Call to Action */}
-        <section className="py-24 relative overflow-hidden">
+        <section className="py-28 relative overflow-hidden bg-white dark:bg-[#121212]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-gray-50 to-white dark:from-[#1c1c1c] dark:to-[#2a2a2a] rounded-[3rem] p-12 md:p-20 text-center border border-gray-200 dark:border-gray-800 relative overflow-hidden shadow-xl dark:shadow-none">
-              <div className="absolute top-0 left-0 w-full h-1 bg-[#3ecf8e]"></div>
-              <h2 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-                Ready to Transform Your School?
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
-                Join hundreds of South African schools using EduNexus to simplify
-                administration, improve results, and empower every learner.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link
-                  to="/login"
-                  className="bg-[#3ecf8e] text-black px-10 py-5 rounded-xl font-bold text-lg hover:bg-[#34b27b] transition-all transform hover:scale-105 shadow-lg shadow-[#3ecf8e]/20"
-                >
-                  Enrol Your School
-                </Link>
-                <button className="bg-transparent border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-10 py-5 rounded-xl font-bold text-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
-                  Contact Us
-                </button>
+            <div className="bg-gradient-to-r from-gray-50 to-white dark:from-[#1c1c1c] dark:to-[#2a2a2a] rounded-[3rem] p-12 md:p-20 text-center border border-gray-200 dark:border-gray-800 relative overflow-hidden shadow-2xl dark:shadow-none">
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-[#3ecf8e]"></div>
+              
+              {/* Decorative background elements inside CTA */}
+              <div className="absolute top-0 left-0 w-64 h-64 bg-[#3ecf8e]/10 rounded-full blur-[80px] -translate-x-1/2 -translate-y-1/2"></div>
+              <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#3ecf8e]/10 rounded-full blur-[80px] translate-x-1/2 translate-y-1/2"></div>
+              
+              <div className="relative z-10">
+                <h2 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6">
+                  Ready to Transform Your School?
+                </h2>
+                <p className="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
+                  Join hundreds of South African schools using EduNexus to simplify
+                  administration, improve results, and empower every learner.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <Link
+                    to="/login"
+                    className="bg-[#3ecf8e] text-black px-10 py-5 rounded-xl font-bold text-lg hover:bg-[#34b27b] transition-all transform hover:scale-105 shadow-lg shadow-[#3ecf8e]/20 flex items-center justify-center gap-2"
+                  >
+                    Enrol Your School
+                  </Link>
+                  <Link 
+                    to="/contact" 
+                    className="bg-transparent border-2 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white px-10 py-5 rounded-xl font-bold text-lg hover:border-[#3ecf8e] hover:text-[#3ecf8e] transition-all flex items-center justify-center"
+                  >
+                    Book a Demo
+                  </Link>
+                </div>
+                <p className="text-sm text-gray-500 mt-6 font-medium">No credit card required • 30-day free trial • Cancel anytime</p>
               </div>
             </div>
           </div>
