@@ -443,11 +443,14 @@ export const generateExam = action({
   args: {
     subjectId: v.id("subjects"),
     classId: v.id("classes"),
-    topics: v.array(v.string()), // MULTI-TOPIC support
+    /** @deprecated Use `topics` — kept for older deployed clients */
+    topic: v.optional(v.string()),
+    topics: v.optional(v.array(v.string())),
     difficulty: v.string(),
     count: v.number(),
     title: v.string(),
-    examType: v.string(), // "quiz" or "exam"
+    examType: v.optional(v.string()), // "quiz" or "exam"
+    questionType: v.optional(v.string()),
     questionTypeMix: v.optional(v.array(v.object({
       type: v.string(),
       count: v.number(),
@@ -462,6 +465,18 @@ export const generateExam = action({
     const user: any = await ctx.runQuery(api.users.getCurrentUser);
     if (!user) throw new Error("Unauthorized");
 
+    const topics =
+      args.topics && args.topics.length > 0
+        ? args.topics
+        : args.topic
+          ? args.topic.split(/[,;]/).map((t) => t.trim()).filter(Boolean)
+          : [];
+    if (topics.length === 0) {
+      throw new Error("At least one syllabus topic is required");
+    }
+
+    const examType = args.examType ?? "exam";
+
     // Get subject info
     const subjects: any = await ctx.runQuery(api.subjects.getSubjects);
     const subject = subjects.find((s: any) => s._id === args.subjectId);
@@ -473,12 +488,12 @@ export const generateExam = action({
       title: args.title,
       subject: args.subjectId,
       class: args.classId,
-      duration: args.examType === "quiz" ? Math.max(5, Math.ceil(args.count * 2)) : Math.max(30, args.count * 3),
+      duration: examType === "quiz" ? Math.max(5, Math.ceil(args.count * 2)) : Math.max(30, args.count * 3),
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      examType: args.examType,
-      maxAttempts: args.maxAttempts || (args.examType === "quiz" ? 3 : 1),
-      instantFeedback: args.instantFeedback ?? (args.examType === "quiz"),
-      syllabusTopics: args.topics,
+      examType,
+      maxAttempts: args.maxAttempts || (examType === "quiz" ? 3 : 1),
+      instantFeedback: args.instantFeedback ?? (examType === "quiz"),
+      syllabusTopics: topics,
       subjectCategory,
       templateUsed: args.templateUsed,
     });
@@ -487,11 +502,15 @@ export const generateExam = action({
     if (!apiKey) return { examId, questions: [] };
 
     // Build question type mix
-    const qMix = args.questionTypeMix || [{ type: "MCQ", count: args.count, points: 1 }];
+    const qMix =
+      args.questionTypeMix ||
+      (args.questionType
+        ? [{ type: args.questionType, count: args.count, points: 1 }]
+        : [{ type: "MCQ", count: args.count, points: 1 }]);
 
     // Build per-topic distribution
-    const topicsList = args.topics.join(", ");
-    const questionsPerTopic = Math.ceil(args.count / args.topics.length);
+    const topicsList = topics.join(", ");
+    const questionsPerTopic = Math.ceil(args.count / topics.length);
 
     // Build the prompt based on question types
     const typeDescriptions: Record<string, string> = {
@@ -594,12 +613,12 @@ export const generateExam = action({
       .filter((m) => typeExamples[m.type])
       .map((m) =>
         typeExamples[m.type]
-          .replace(/TOPIC_NAME/g, args.topics[0] || "the topic")
+          .replace(/TOPIC_NAME/g, topics[0] || "the topic")
           .replace(/DIFFICULTY/g, args.difficulty)
       )
       .join(",\n");
 
-    const prompt = `You are an expert South African CAPS curriculum teacher creating a ${args.examType === "quiz" ? "practice quiz" : "formal exam"}.
+    const prompt = `You are an expert South African CAPS curriculum teacher creating a ${examType === "quiz" ? "practice quiz" : "formal exam"}.
 
 CONTEXT:
 - Subject: ${subjectName} (${subjectCategory})
