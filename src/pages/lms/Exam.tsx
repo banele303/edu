@@ -44,7 +44,11 @@ const Exam = () => {
   
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [submission, setSubmission] = useState<{ score: number; answers: { questionId: string; answer: string }[] } | null>(null);
+  const [submission, setSubmission] = useState<{
+    score: number;
+    answers: { questionId: string; answer: string }[];
+    attemptNumber?: number;
+  } | null>(null);
   // Student Answers State: { [questionId]: "Selected Option" }
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
@@ -108,16 +112,6 @@ const Exam = () => {
       </div>
     );
   }
-
-  const handleTeacherDelete = async () => {
-    if (!confirm("Are you sure you want to delete this exam?")) return;
-    try {
-      toast.error("Delete exam not implemented yet");
-      navigate("/lms/quizzes");
-    } catch (error) {
-      toast.error("Failed to delete");
-    }
-  };
 
   const handleStudentSubmit = async () => {
     if (!exam) return;

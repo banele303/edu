@@ -39,14 +39,6 @@ const Exams = () => {
   const displayExams =
     activeTab === "all" ? convexExams : activeTab === "quiz" ? quizzes : exams;
 
-  const date = new Date();
-
-  // Get best quiz scores for students
-  const getBestScore = (examId: string) => {
-    // This would use getBestQuizScore query in a real implementation
-    return null;
-  };
-
   if (convexExams === undefined) {
     return (
       <div className="h-[80vh] flex items-center justify-center">
