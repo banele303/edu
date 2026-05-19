@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, Controller, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -292,13 +292,51 @@ const ExamGenerator = ({ open, onOpenChange, onSuccess }: Props) => {
     ? parseInt(selectedClass.name.replace(/\D/g, ""), 10)
     : undefined;
 
-  // Get syllabus topics for selected subject
-  const syllabusTopics = useQuery(
-    api.exams.getSyllabusTopics,
-    selectedSubjectId
-      ? { subjectId: selectedSubjectId as any, grade: classGrade }
-      : "skip"
+  // CAPS syllabus topics (capsActions is deployed on prod; exams.getSyllabusTopics may lag)
+  const capsSubjects = useQuery(
+    api.capsActions.getCapsSubjects,
+    classGrade !== undefined ? { grade: classGrade } : {}
   );
+
+  const matchedCapsSubjectId = useMemo(() => {
+    if (!selectedSubject || !capsSubjects) return undefined;
+    const matchCaps = (cs: { code: string; name: string; grade?: number }) => {
+      if (classGrade !== undefined && cs.grade !== classGrade) return false;
+      const codeMatch =
+        selectedSubject.code.toUpperCase().startsWith(cs.code.toUpperCase()) ||
+        cs.code.toUpperCase().startsWith(selectedSubject.code.toUpperCase());
+      const nameMatch =
+        selectedSubject.name.toLowerCase().includes(cs.name.toLowerCase()) ||
+        cs.name.toLowerCase().includes(selectedSubject.name.toLowerCase());
+      return codeMatch || nameMatch;
+    };
+    return (
+      capsSubjects.find(matchCaps)?._id ??
+      capsSubjects.find((cs) => {
+        const codeMatch =
+          selectedSubject.code.toUpperCase().startsWith(cs.code.toUpperCase()) ||
+          cs.code.toUpperCase().startsWith(selectedSubject.code.toUpperCase());
+        const nameMatch =
+          selectedSubject.name.toLowerCase().includes(cs.name.toLowerCase()) ||
+          cs.name.toLowerCase().includes(selectedSubject.name.toLowerCase());
+        return codeMatch || nameMatch;
+      })?._id
+    );
+  }, [selectedSubject, capsSubjects, classGrade]);
+
+  const syllabusTopicsRaw = useQuery(
+    api.capsActions.getSyllabusTopics,
+    matchedCapsSubjectId ? { subjectId: matchedCapsSubjectId } : "skip"
+  );
+
+  const syllabusTopics = useMemo(() => {
+    if (!syllabusTopicsRaw || !matchedCapsSubjectId) return syllabusTopicsRaw;
+    return syllabusTopicsRaw.filter(
+      (t: { capsSubject: string; grade: number }) =>
+        t.capsSubject === matchedCapsSubjectId &&
+        (classGrade === undefined || t.grade === classGrade)
+    );
+  }, [syllabusTopicsRaw, matchedCapsSubjectId, classGrade]);
 
   // Filter templates by exam type
   const filteredTemplates = EXAM_TEMPLATES.filter((t) => t.examType === selectedExamType);
