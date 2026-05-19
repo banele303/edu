@@ -401,14 +401,23 @@ const ExamGenerator = ({ open, onOpenChange, onSuccess }: Props) => {
       setLoading(true);
 
       const mix = questionMix.filter((m) => m.count > 0);
-      const payload = {
+      const topic = values.topics.join(", ");
+
+      // Legacy shape — required for older Convex deployments (topic: string)
+      const legacyPayload = {
         subjectId: values.subject as any,
         classId: values.class as any,
-        topics: values.topics,
-        topic: values.topics.join(", "),
+        topic,
         difficulty: values.difficulty,
         count: totalQuestions,
         title: values.title,
+        questionType: mix[0]?.type ?? "MCQ",
+      };
+
+      // Full shape — multi-topic + question type mix (newer deployments)
+      const fullPayload = {
+        ...legacyPayload,
+        topics: values.topics,
         examType: values.examType,
         questionTypeMix: mix,
         templateUsed: selectedTemplate || undefined,
@@ -417,19 +426,11 @@ const ExamGenerator = ({ open, onOpenChange, onSuccess }: Props) => {
       };
 
       try {
-        await generateExamAction(payload);
+        await generateExamAction(legacyPayload);
       } catch (err: any) {
         const msg = err?.message || "";
-        if (msg.includes("topic") && msg.includes("ArgumentValidation")) {
-          await generateExamAction({
-            subjectId: payload.subjectId,
-            classId: payload.classId,
-            topic: payload.topic,
-            difficulty: payload.difficulty,
-            count: payload.count,
-            title: payload.title,
-            questionType: mix[0]?.type ?? "MCQ",
-          });
+        if (msg.includes("ArgumentValidation") || msg.includes("topic")) {
+          await generateExamAction(fullPayload);
         } else {
           throw err;
         }
