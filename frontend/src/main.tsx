@@ -22,7 +22,7 @@ const convex = new ConvexReactClient(convexUrl);
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ConvexAuthProvider client={convex}>
-      <ThemeProvider defaultTheme="dark" storageKey="edunexus-theme">
+      <ThemeProvider defaultTheme="light" storageKey="edunexus-theme">
         <AuthProvider>
           <RouterProvider router={router} />
           <Toaster richColors position="top-right" />

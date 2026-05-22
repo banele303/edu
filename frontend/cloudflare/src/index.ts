@@ -1,46 +1,84 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-
-export interface Env {
-  AI: any;
-  STORAGE?: R2Bucket;
-  VECTOR_INDEX?: VectorizeIndex;
-  CONVEX_URL?: string;
-}
+import type { Env, UploadMetadata } from "./env";
+import { deleteVectorsForMaterial, ingestR2Object } from "./lib/ingest";
+import { buildRagContext, searchMaterials } from "./lib/rag";
 
 const app = new Hono<{ Bindings: Env }>();
 
 app.use("*", cors());
 
+function publicFileUrl(env: Env, objectKey: string, host: string): string {
+  if (env.R2_PUBLIC_URL) {
+    return `${env.R2_PUBLIC_URL.replace(/\/$/, "")}/${objectKey}`;
+  }
+  return `https://${host}/api/files/${encodeURIComponent(objectKey)}`;
+}
+
+function parseUploadMetadataHeader(raw: string | undefined): Partial<UploadMetadata> {
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw) as Partial<UploadMetadata>;
+  } catch {
+    return {};
+  }
+}
+
 app.get("/", (c) => {
   return c.text("EduNexus AI & Storage Worker is online.");
 });
 
-// AI Chat Endpoint (Study Buddy)
+// Serve R2 objects when no public bucket domain is configured (dev)
+app.get("/api/files/:key", async (c) => {
+  const key = decodeURIComponent(c.req.param("key"));
+  if (!c.env.STORAGE) return c.json({ error: "STORAGE not bound" }, 500);
+
+  const object = await c.env.STORAGE.get(key);
+  if (!object) return c.json({ error: "Not found" }, 404);
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  return new Response(object.body, { headers });
+});
+
+// AI Chat with Vectorize RAG
 app.post("/api/chat", async (c) => {
   try {
     const { messages, subjectId } = await c.req.json();
-    
-    // In the future: Search Vectorize using subjectId
-    // const embedding = await c.env.AI.run("@cf/baai/bge-small-en-v1.5", { text: messages[messages.length - 1].content });
-    // const matches = await c.env.VECTOR_INDEX.query(embedding.data[0], { topK: 3, filter: { subjectId } });
-    
-    // For now, simple fallback to Llama 3
+    const lastUser = [...messages].reverse().find((m: { role: string }) => m.role === "user");
+
+    let ragContext = "";
+    if (lastUser?.content && c.env.VECTOR_INDEX) {
+      try {
+        const matches = await searchMaterials(c.env, lastUser.content, {
+          subjectId,
+          topK: 5,
+        });
+        ragContext = buildRagContext(matches);
+      } catch (ragError) {
+        console.warn("Vectorize search skipped:", ragError);
+      }
+    }
+
     const response = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
       messages: [
-        { role: "system", content: "You are EduBot, a helpful AI study buddy for South African school students (Grade 5 to 12)." },
-        ...messages
+        {
+          role: "system",
+          content: `You are EduBot, a helpful AI study buddy for South African school students (Grade 5 to 12). Use the provided study material excerpts when relevant.${ragContext}`,
+        },
+        ...messages,
       ],
-      max_tokens: 1024
+      max_tokens: 1024,
     });
 
     return c.json({ response: response.response });
-  } catch (error: any) {
-    return c.json({ error: error.message }, 500);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Chat failed";
+    return c.json({ error: message }, 500);
   }
 });
 
-// R2 Pre-signed URL for File Uploads
 app.post("/api/generate-path", async (c) => {
   try {
     const prompt = `You are an expert educator. Generate a personalized, weekly learning path for a student.
@@ -56,55 +94,136 @@ Schema:
 }`;
 
     const response = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
-      messages: [
-        { role: "user", content: prompt }
-      ],
-      max_tokens: 1024
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 1024,
     });
 
     return c.json({ response: response.response });
-  } catch (error: any) {
-    return c.json({ error: error.message }, 500);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to generate path";
+    return c.json({ error: message }, 500);
   }
 });
 
-// R2 Pre-signed URL for File Uploads
+// Step 1: Client requests upload target (R2 via worker proxy)
 app.post("/api/upload-url", async (c) => {
   try {
-    const { filename, contentType } = await c.req.json();
-    
+    const body = await c.req.json();
+    const { filename, contentType } = body;
+
+    if (!filename) {
+      return c.json({ error: "filename is required" }, 400);
+    }
     if (!c.env.STORAGE) {
       return c.json({ error: "R2 STORAGE binding is not configured." }, 400);
     }
 
     const objectKey = `${crypto.randomUUID()}-${filename}`;
-    
-    // Note: Cloudflare Workers cannot easily generate standard S3 pre-signed URLs natively without extra libraries.
-    // However, we can use the worker itself as a proxy for uploads.
-    // For a robust implementation, we would use aws4fetch to generate a pre-signed URL to the R2 S3 API.
-    
-    return c.json({ 
-      uploadUrl: `https://${c.req.header("host")}/api/upload-proxy/${objectKey}`,
-      fileUrl: `https://your-custom-domain.com/${objectKey}` // Replace with actual R2 public domain
+    const host = c.req.header("host") || "localhost";
+
+    return c.json({
+      objectKey,
+      uploadUrl: `https://${host}/api/upload-proxy/${encodeURIComponent(objectKey)}`,
+      fileUrl: publicFileUrl(c.env, objectKey, host),
     });
-  } catch (error: any) {
-    return c.json({ error: error.message }, 500);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to create upload URL";
+    return c.json({ error: message }, 500);
   }
 });
 
+// Step 2: Upload bytes to R2; Step 3–5: process + embed + Vectorize (async)
 app.put("/api/upload-proxy/:key", async (c) => {
-  const key = c.req.param("key");
+  const key = decodeURIComponent(c.req.param("key"));
   if (!c.env.STORAGE) return c.json({ error: "STORAGE not bound" }, 500);
-  
-  await c.env.STORAGE.put(key, c.req.raw.body);
-  return c.json({ success: true, key });
+
+  const headerMeta = parseUploadMetadataHeader(c.req.header("X-Upload-Metadata"));
+  const contentType =
+    c.req.header("Content-Type") || headerMeta.contentType || "application/octet-stream";
+
+  const meta: UploadMetadata = {
+    filename: headerMeta.filename || key,
+    contentType,
+    subjectId: headerMeta.subjectId,
+    materialId: headerMeta.materialId,
+    title: headerMeta.title,
+    description: headerMeta.description,
+  };
+
+  await c.env.STORAGE.put(key, c.req.raw.body, {
+    httpMetadata: { contentType },
+    customMetadata: {
+      filename: meta.filename,
+      contentType: meta.contentType,
+      subjectId: meta.subjectId || "",
+      materialId: meta.materialId || "",
+      title: meta.title || "",
+      description: meta.description || "",
+    },
+  });
+
+  if (c.env.VECTOR_INDEX && (meta.subjectId || meta.title)) {
+    c.executionCtx.waitUntil(
+      ingestR2Object(c.env, key, meta).catch((err) => {
+        console.error("Background ingest failed:", err);
+      })
+    );
+  }
+
+  return c.json({ success: true, key, fileUrl: publicFileUrl(c.env, key, c.req.header("host") || "localhost") });
 });
 
-// AI Global Semantic Search
+// Explicit ingest / re-index after Convex material is created
+app.post("/api/ingest", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { objectKey, filename, contentType, subjectId, materialId, title, description } =
+      body;
+
+    if (!objectKey) {
+      return c.json({ error: "objectKey is required" }, 400);
+    }
+    if (!c.env.STORAGE || !c.env.VECTOR_INDEX) {
+      return c.json({ error: "STORAGE and VECTOR_INDEX must be configured." }, 400);
+    }
+
+    const meta: UploadMetadata = {
+      filename: filename || objectKey,
+      contentType: contentType || "application/octet-stream",
+      subjectId,
+      materialId,
+      title,
+      description,
+    };
+
+    await deleteVectorsForMaterial(c.env, objectKey, materialId);
+    const result = await ingestR2Object(c.env, objectKey, meta);
+
+    return c.json(result);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Ingest failed";
+    return c.json({ error: message }, 500);
+  }
+});
+
+// Semantic search over ingested materials
+app.post("/api/material-search", async (c) => {
+  try {
+    const { query, subjectId, topK } = await c.req.json();
+    if (!query) return c.json({ error: "query is required" }, 400);
+
+    const matches = await searchMaterials(c.env, query, { subjectId, topK });
+    return c.json({ matches });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Search failed";
+    return c.json({ error: message }, 500);
+  }
+});
+
 app.post("/api/search", async (c) => {
   try {
     const { query, items } = await c.req.json();
-    
+
     const prompt = `You are an AI search assistant. Given a user search query and a list of items (materials, subjects, announcements), identify the top 3 most relevant items.
     
 Query: "${query}"
@@ -115,25 +234,24 @@ Example: ["id1", "id2", "id3"]`;
 
     const response = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 512
+      max_tokens: 512,
     });
 
-    // Extract JSON array from response
-    const startIdx = response.response.indexOf('[');
-    const endIdx = response.response.lastIndexOf(']');
+    const startIdx = response.response.indexOf("[");
+    const endIdx = response.response.lastIndexOf("]");
     const ids = JSON.parse(response.response.substring(startIdx, endIdx + 1));
 
     return c.json({ ids });
-  } catch (error: any) {
-    return c.json({ error: error.message }, 500);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Search failed";
+    return c.json({ error: message }, 500);
   }
 });
 
-// AI Assignment Grader
 app.post("/api/grade-assignment", async (c) => {
   try {
     const { submission, assignment } = await c.req.json();
-    
+
     const prompt = `You are a teacher grading a student assignment.
 Assignment Title: ${assignment.title}
 Instructions: ${assignment.description}
@@ -145,24 +263,24 @@ Return as JSON: { "grade": number, "feedback": "string" }`;
 
     const response = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1024
+      max_tokens: 1024,
     });
 
-    const startIdx = response.response.indexOf('{');
-    const endIdx = response.response.lastIndexOf('}');
+    const startIdx = response.response.indexOf("{");
+    const endIdx = response.response.lastIndexOf("}");
     const result = JSON.parse(response.response.substring(startIdx, endIdx + 1));
 
     return c.json(result);
-  } catch (error: any) {
-    return c.json({ error: error.message }, 500);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Grading failed";
+    return c.json({ error: message }, 500);
   }
 });
 
-// AI Exam/Quiz Generator
 app.post("/api/generate-exam", async (c) => {
   try {
     const { topic, subjectName, difficulty, count } = await c.req.json();
-    
+
     const prompt = `
       You are an expert South African teacher creating a multiple-choice exam.
       
@@ -191,45 +309,29 @@ app.post("/api/generate-exam", async (c) => {
 
     const response = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 2048
+      max_tokens: 2048,
     });
 
-    // Clean JSON response (llama-3-instruct might add backticks or preamble)
     let content = response.response.trim();
-    const startIdx = content.indexOf('[');
-    const endIdx = content.lastIndexOf(']');
-    
+    const startIdx = content.indexOf("[");
+    const endIdx = content.lastIndexOf("]");
+
     if (startIdx === -1 || endIdx === -1) {
-      console.error("AI response did not contain a JSON array:", content);
-      return c.json({ 
-        error: "AI failed to generate a valid JSON array.",
-        rawResponse: content 
-      }, 500);
+      return c.json({ error: "AI failed to generate a valid JSON array.", rawResponse: content }, 500);
     }
 
     content = content.substring(startIdx, endIdx + 1);
-    
-    try {
-      return c.json({ questions: JSON.parse(content) });
-    } catch (parseError: any) {
-      console.error("JSON Parse Error:", parseError.message, "Content:", content);
-      return c.json({ 
-        error: "Failed to parse AI response as JSON.",
-        details: parseError.message,
-        content 
-      }, 500);
-    }
-  } catch (error: any) {
-    console.error("Worker Error:", error.message);
-    return c.json({ error: error.message }, 500);
+    return c.json({ questions: JSON.parse(content) });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Exam generation failed";
+    return c.json({ error: message }, 500);
   }
 });
 
-// AI Timetable Generator
 app.post("/api/generate-timetable", async (c) => {
   try {
     const { context, settings } = await c.req.json();
-    
+
     const prompt = `
       You are a school scheduler. Generate a weekly timetable (Monday to Friday) as a JSON object.
       
@@ -248,36 +350,22 @@ app.post("/api/generate-timetable", async (c) => {
 
     const response = await c.env.AI.run("@cf/meta/llama-3-8b-instruct", {
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 2560
+      max_tokens: 2560,
     });
 
     let content = response.response.trim();
-    const startIdx = content.indexOf('{');
-    const endIdx = content.lastIndexOf('}');
-    
+    const startIdx = content.indexOf("{");
+    const endIdx = content.lastIndexOf("}");
+
     if (startIdx === -1 || endIdx === -1) {
-      console.error("AI response did not contain a JSON object:", content);
-      return c.json({ 
-        error: "AI failed to generate a valid JSON timetable.",
-        rawResponse: content 
-      }, 500);
+      return c.json({ error: "AI failed to generate a valid JSON timetable.", rawResponse: content }, 500);
     }
 
     content = content.substring(startIdx, endIdx + 1);
-
-    try {
-      return c.json(JSON.parse(content));
-    } catch (parseError: any) {
-      console.error("JSON Parse Error:", parseError.message, "Content:", content);
-      return c.json({ 
-        error: "Failed to parse AI response as JSON.",
-        details: parseError.message,
-        content 
-      }, 500);
-    }
-  } catch (error: any) {
-    console.error("Worker Error:", error.message);
-    return c.json({ error: error.message }, 500);
+    return c.json(JSON.parse(content));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Timetable generation failed";
+    return c.json({ error: message }, 500);
   }
 });
 
