@@ -13,7 +13,7 @@ export default function ComingSoon() {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">Feature Coming Soon</h1>
         <p className="text-muted-foreground max-w-md mx-auto">
-          We're working hard to bring you this feature. This section of the EduNexus dashboard will be available in a future update.
+          We're working hard to bring you this feature. This section of the Vhembe Rising Star Academy dashboard will be available in a future update.
         </p>
       </div>
       <Button onClick={() => navigate("/dashboard")}>

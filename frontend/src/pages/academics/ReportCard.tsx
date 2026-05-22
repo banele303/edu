@@ -90,7 +90,7 @@ export default function ReportCardGenerator() {
                   EN
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">EduNexus Academy</h2>
+                  <h2 className="text-2xl font-bold text-foreground">Vhembe Rising Star Academy Academy</h2>
                   <p className="text-muted-foreground">Official Academic Transcript • 2026</p>
                 </div>
               </div>

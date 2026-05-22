@@ -52,8 +52,9 @@ export interface NavItem {
 export const sidebardata = {
   teams: [
     {
-      name: "Springfield High",
+      name: "Vhembe Rising Star Academy",
       logo: School,
+      logoSrc: "/logo-school.jpeg",
     },
   ],
   navMain: [

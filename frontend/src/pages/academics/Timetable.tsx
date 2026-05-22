@@ -18,7 +18,7 @@ const Timetable = () => {
   // Persist class selection in localStorage so it doesn't disappear on reload
   const [selectedClass, setSelectedClass] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("edunexus_selected_timetable_class") || "";
+      return localStorage.getItem("Vhembe Rising Star Academy_selected_timetable_class") || "";
     }
     return "";
   });
@@ -26,7 +26,7 @@ const Timetable = () => {
   const handleClassSelect = (val: string) => {
     setSelectedClass(val);
     if (typeof window !== "undefined") {
-      localStorage.setItem("edunexus_selected_timetable_class", val);
+      localStorage.setItem("Vhembe Rising Star Academy_selected_timetable_class", val);
     }
   };
 

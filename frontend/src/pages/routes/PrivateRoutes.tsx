@@ -46,15 +46,15 @@ const PrivateRoutes = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sticky top-0 z-10">
+      <SidebarInset className="bg-white text-gray-950">
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 px-4 sticky top-0 z-10">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <GlobalSearch />
           <div className="flex-1" />
           <NotificationBell />
         </header>
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto bg-white">
           <Outlet />
         </main>
         <StudyBuddy />

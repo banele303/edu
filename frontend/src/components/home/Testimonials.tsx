@@ -8,7 +8,7 @@ const testimonials = [
     avatar: "https://i.pravatar.cc/150?img=47",
     rating: 5,
     quote:
-      "EduNexus transformed how we manage our school. Our teachers spend less time on admin and more time in the classroom. The report cards alone saved us two full weeks of work each term.",
+      "Vhembe Rising Star Academy transformed how we manage our school. Our teachers spend less time on admin and more time in the classroom. The report cards alone saved us two full weeks of work each term.",
     tag: "Administration",
   },
   {
@@ -48,7 +48,7 @@ const testimonials = [
     avatar: "https://i.pravatar.cc/150?img=21",
     rating: 5,
     quote:
-      "We piloted EduNexus across 12 schools in our circuit. The DBE compliance of the reports and the POPIA-aligned data handling gave us complete confidence to roll it out district-wide.",
+      "We piloted Vhembe Rising Star Academy across 12 schools in our circuit. The DBE compliance of the reports and the POPIA-aligned data handling gave us complete confidence to roll it out district-wide.",
     tag: "Compliance",
   },
   {
@@ -64,7 +64,7 @@ const testimonials = [
 ];
 
 const tagColors: Record<string, string> = {
-  Administration: "bg-[#3ecf8e]/10 text-[#3ecf8e] border-[#3ecf8e]/20",
+  Administration: "bg-[#dc2626]/10 text-[#dc2626] border-[#dc2626]/20",
   Analytics: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   Timetabling: "bg-purple-500/10 text-purple-400 border-purple-500/20",
   Communication: "bg-orange-500/10 text-orange-400 border-orange-500/20",
@@ -75,21 +75,21 @@ const tagColors: Record<string, string> = {
 const Testimonials = () => {
   return (
     <section id="testimonials" className="py-28 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#3ecf8e]/[0.02] to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#dc2626]/[0.02] to-transparent pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#3ecf8e]/10 border border-[#3ecf8e]/20 text-[#3ecf8e] text-xs font-bold uppercase tracking-widest">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] text-xs font-bold uppercase tracking-widest">
             Testimonials
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
             Trusted by Educators{" "}
-            <span className="text-[#3ecf8e]">Across South Africa</span>
+            <span className="text-[#dc2626]">Across South Africa</span>
           </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
             Real stories from principals, teachers, and district managers who've
-            transformed their schools with EduNexus.
+            transformed their schools with Vhembe Rising Star Academy.
           </p>
         </div>
 
@@ -111,7 +111,7 @@ const Testimonials = () => {
           {testimonials.map((t, idx) => (
             <div
               key={idx}
-              className="break-inside-avoid group bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-800 rounded-2xl p-7 hover:border-[#3ecf8e]/30 hover:shadow-xl transition-all duration-300"
+              className="break-inside-avoid group bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-800 rounded-2xl p-7 hover:border-[#dc2626]/30 hover:shadow-xl transition-all duration-300"
             >
               {/* Stars + tag */}
               <div className="flex items-center justify-between mb-4">
@@ -137,12 +137,12 @@ const Testimonials = () => {
                 <img
                   src={t.avatar}
                   alt={t.name}
-                  className="w-11 h-11 rounded-full object-cover border-2 border-[#3ecf8e]/40"
+                  className="w-11 h-11 rounded-full object-cover border-2 border-[#dc2626]/40"
                 />
                 <div>
                   <p className="font-bold text-gray-900 dark:text-white text-sm">{t.name}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{t.role}</p>
-                  <p className="text-xs text-[#3ecf8e] font-medium">{t.school}</p>
+                  <p className="text-xs text-[#dc2626] font-medium">{t.school}</p>
                 </div>
               </div>
             </div>

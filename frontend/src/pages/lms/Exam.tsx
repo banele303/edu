@@ -282,7 +282,7 @@ const Exam = () => {
         printIncludeHeader ? "print:block" : "print:hidden"
       )}>
         <div className="text-center font-black tracking-widest text-lg uppercase border-b-2 border-black pb-1.5">
-          Edunexus Curriculum Assessment
+          Vhembe Rising Star Academy Curriculum Assessment
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs font-bold">
           <div>SUBJECT: <span className="underline ml-1 font-semibold">{exam.subject?.name}</span></div>

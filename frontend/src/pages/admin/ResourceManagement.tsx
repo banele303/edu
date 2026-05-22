@@ -223,7 +223,7 @@ export default function AdminResources() {
                   {seeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BookOpen className="mr-2 h-4 w-4" />}
                   Seed CAPS Curriculum
                 </Button>
-                <Button onClick={handleSeedAll} disabled={seeding} className="bg-[#3ecf8e] text-black hover:bg-[#34b27b]">
+                <Button onClick={handleSeedAll} disabled={seeding} className="bg-[#dc2626] text-black hover:bg-[#b91c1c]">
                   {seeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
                   Seed Everything
                 </Button>
@@ -293,7 +293,7 @@ export default function AdminResources() {
                 <Input value={ppFileUrl} onChange={e => setPpFileUrl(e.target.value)} placeholder="https://your-storage.com/file.pdf" />
                 <p className="text-xs text-muted-foreground mt-1">Upload file to Cloudflare R2 first, then paste the URL here.</p>
               </div>
-              <Button onClick={handleAddPastPaper} className="bg-[#3ecf8e] text-black hover:bg-[#34b27b]">
+              <Button onClick={handleAddPastPaper} className="bg-[#dc2626] text-black hover:bg-[#b91c1c]">
                 <Upload className="mr-2 h-4 w-4" /> Add Past Paper
               </Button>
             </CardContent>
@@ -371,7 +371,7 @@ export default function AdminResources() {
                   <Input value={srFileUrl} onChange={e => setSrFileUrl(e.target.value)} placeholder="https://..." />
                 </div>
               </div>
-              <Button onClick={handleAddResource} className="bg-[#3ecf8e] text-black hover:bg-[#34b27b]">
+              <Button onClick={handleAddResource} className="bg-[#dc2626] text-black hover:bg-[#b91c1c]">
                 <Upload className="mr-2 h-4 w-4" /> Add Resource
               </Button>
             </CardContent>

@@ -136,7 +136,7 @@ export default function AssignmentsPage() {
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreate} disabled={saving} className="bg-[#3ecf8e] text-black hover:bg-[#34b27b]">
+                <Button onClick={handleCreate} disabled={saving} className="bg-[#dc2626] text-black hover:bg-[#b91c1c]">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Assignment"}
                 </Button>
               </div>

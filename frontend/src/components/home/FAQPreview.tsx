@@ -4,20 +4,20 @@ import { Link } from "react-router";
 
 const faqs = [
   {
-    q: "Is EduNexus aligned with the South African CAPS curriculum?",
-    a: "Yes — every feature in EduNexus is purpose-built around CAPS. From timetabling to assessment creation, all content, mark sheets, and report templates are fully aligned to the DBE's curriculum framework for all phases (Foundation, Intermediate, Senior, and FET).",
+    q: "Is Vhembe Rising Star Academy aligned with the South African CAPS curriculum?",
+    a: "Yes — every feature in Vhembe Rising Star Academy is purpose-built around CAPS. From timetabling to assessment creation, all content, mark sheets, and report templates are fully aligned to the DBE's curriculum framework for all phases (Foundation, Intermediate, Senior, and FET).",
   },
   {
-    q: "How long does it take to set up EduNexus for my school?",
+    q: "How long does it take to set up Vhembe Rising Star Academy for my school?",
     a: "Most schools are fully operational within 24–48 hours. Our onboarding team walks you through the process: school configuration, bulk learner import, staff setup, and timetabling. We offer free, dedicated onboarding support for every plan.",
   },
   {
     q: "Is my school's data safe and POPIA compliant?",
-    a: "Absolutely. EduNexus stores all data on South African servers, uses AES-256 encryption at rest and TLS in transit, and is fully POPIA compliant. We never sell or share your data. Detailed data processing agreements are available on request.",
+    a: "Absolutely. Vhembe Rising Star Academy stores all data on South African servers, uses AES-256 encryption at rest and TLS in transit, and is fully POPIA compliant. We never sell or share your data. Detailed data processing agreements are available on request.",
   },
   {
     q: "Can parents and learners access the platform on mobile?",
-    a: "Yes — EduNexus is mobile-first and works seamlessly in any browser on any device. We also offer a low-data mode for areas with limited connectivity, making it accessible to learners and parents in all communities.",
+    a: "Yes — Vhembe Rising Star Academy is mobile-first and works seamlessly in any browser on any device. We also offer a low-data mode for areas with limited connectivity, making it accessible to learners and parents in all communities.",
   },
   {
     q: "Do you offer training for teachers and admin staff?",
@@ -37,15 +37,15 @@ const FAQPreview = () => {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#3ecf8e]/10 border border-[#3ecf8e]/20 text-[#3ecf8e] text-xs font-bold uppercase tracking-widest">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] text-xs font-bold uppercase tracking-widest">
             FAQ
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
             Questions?{" "}
-            <span className="text-[#3ecf8e]">We've Got Answers</span>
+            <span className="text-[#dc2626]">We've Got Answers</span>
           </h2>
           <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Everything you need to know before getting your school on EduNexus.
+            Everything you need to know before getting your school on Vhembe Rising Star Academy.
           </p>
         </div>
 
@@ -56,7 +56,7 @@ const FAQPreview = () => {
               key={idx}
               className={`bg-white dark:bg-[#1a1a1a] border rounded-2xl overflow-hidden transition-all duration-300 ${
                 open === idx
-                  ? "border-[#3ecf8e]/40 shadow-lg shadow-[#3ecf8e]/5"
+                  ? "border-[#dc2626]/40 shadow-lg shadow-[#dc2626]/5"
                   : "border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
               }`}
             >
@@ -70,7 +70,7 @@ const FAQPreview = () => {
                 <span
                   className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
                     open === idx
-                      ? "bg-[#3ecf8e] text-black"
+                      ? "bg-[#dc2626] text-black"
                       : "bg-gray-100 dark:bg-[#2a2a2a] text-gray-500 dark:text-gray-400"
                   }`}
                 >
@@ -103,13 +103,13 @@ const FAQPreview = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Link
               to="/faq"
-              className="px-7 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold text-sm hover:border-[#3ecf8e] hover:text-[#3ecf8e] transition-all"
+              className="px-7 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-bold text-sm hover:border-[#dc2626] hover:text-[#dc2626] transition-all"
             >
               Browse All FAQs
             </Link>
             <Link
               to="/contact"
-              className="px-7 py-3 rounded-xl bg-[#3ecf8e] text-black font-bold text-sm hover:bg-[#34b27b] transition-all hover:scale-105 shadow-lg shadow-[#3ecf8e]/20"
+              className="px-7 py-3 rounded-xl bg-[#dc2626] text-black font-bold text-sm hover:bg-[#b91c1c] transition-all hover:scale-105 shadow-lg shadow-[#dc2626]/20"
             >
               Contact Support
             </Link>

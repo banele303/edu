@@ -45,7 +45,7 @@ const Programs = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="space-y-4">
-            <h2 className="text-[#3ecf8e] font-bold tracking-widest uppercase text-sm">
+            <h2 className="text-[#dc2626] font-bold tracking-widest uppercase text-sm">
               CAPS-Aligned Subjects
             </h2>
             <h3 className="text-4xl font-bold text-gray-900 dark:text-white">
@@ -53,7 +53,7 @@ const Programs = () => {
             </h3>
           </div>
           <p className="text-gray-600 dark:text-gray-400 max-w-md">
-            EduNexus supports all CAPS learning areas from Grade R to Grade 12 — designed
+            Vhembe Rising Star Academy supports all CAPS learning areas from Grade R to Grade 12 — designed
             to match the South African national curriculum.
           </p>
         </div>
@@ -62,14 +62,14 @@ const Programs = () => {
           {subjects.map((subject, idx) => (
             <div
               key={idx}
-              className="group relative bg-gray-50 dark:bg-[#1c1c1c] border border-gray-200 dark:border-gray-800 p-8 rounded-2xl hover:border-[#3ecf8e]/50 transition-all duration-300 shadow-sm hover:shadow-xl"
+              className="group relative bg-gray-50 dark:bg-[#1c1c1c] border border-gray-200 dark:border-gray-800 p-8 rounded-2xl hover:border-[#dc2626]/50 transition-all duration-300 shadow-sm hover:shadow-xl"
             >
               <div className="absolute top-0 right-0 p-4 opacity-10 dark:opacity-5 transition-opacity group-hover:opacity-20 dark:group-hover:opacity-10">
                 <subject.icon size={80} className="text-gray-300 dark:text-white" />
               </div>
 
               <div className="bg-white dark:bg-[#1c1c1c] w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm border border-gray-100 dark:border-gray-700">
-                <subject.icon className="text-[#3ecf8e] w-7 h-7" />
+                <subject.icon className="text-[#dc2626] w-7 h-7" />
               </div>
 
               <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
@@ -90,7 +90,7 @@ const Programs = () => {
                 ))}
               </div>
 
-              <button className="mt-8 flex items-center text-[#3ecf8e] font-bold group-hover:translate-x-2 transition-transform">
+              <button className="mt-8 flex items-center text-[#dc2626] font-bold group-hover:translate-x-2 transition-transform">
                 View Details <ChevronRight className="ml-2 w-4 h-4" />
               </button>
             </div>

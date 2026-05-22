@@ -9,7 +9,7 @@ const faqs = [
     category: "Getting Started",
     questions: [
       {
-        q: "How do I register my school on EduNexus?",
+        q: "How do I register my school on Vhembe Rising Star Academy?",
         a: "Simply click 'Enrol Now' on our homepage, fill in your school's details, and our onboarding team will set up your account within 2 business days. You'll receive login credentials for your admin account.",
       },
       {
@@ -26,7 +26,7 @@ const faqs = [
     category: "Features",
     questions: [
       {
-        q: "Does EduNexus support the CAPS curriculum?",
+        q: "Does Vhembe Rising Star Academy support the CAPS curriculum?",
         a: "Absolutely. Every feature — from timetabling to assessments to report cards — is designed around the CAPS framework. We cover Grades R through 12 across all subjects.",
       },
       {
@@ -39,7 +39,7 @@ const faqs = [
       },
       {
         q: "Can I generate report cards automatically?",
-        a: "Yes. Once you've entered assessment marks, EduNexus auto-generates CAPS-compliant report cards that can be printed or shared digitally with parents.",
+        a: "Yes. Once you've entered assessment marks, Vhembe Rising Star Academy auto-generates CAPS-compliant report cards that can be printed or shared digitally with parents.",
       },
     ],
   },
@@ -52,14 +52,14 @@ const faqs = [
       },
       {
         q: "Does it work on mobile devices?",
-        a: "Yes. EduNexus is fully responsive and works on smartphones, tablets, and desktops. We also have an offline mode for areas with limited connectivity.",
+        a: "Yes. Vhembe Rising Star Academy is fully responsive and works on smartphones, tablets, and desktops. We also have an offline mode for areas with limited connectivity.",
       },
       {
         q: "Can I import data from my existing system?",
         a: "Yes. We support CSV imports for learner data, teacher data, and historical marks. Our onboarding team can also assist with bulk migrations from other systems.",
       },
       {
-        q: "What languages does EduNexus support?",
+        q: "What languages does Vhembe Rising Star Academy support?",
         a: "The platform interface is in English. The AI Study Buddy supports English, isiZulu, Sesotho, Afrikaans, and isiXhosa. We're adding more South African languages regularly.",
       },
     ],
@@ -107,16 +107,16 @@ const FAQ = () => {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="relative pt-32 pb-20 bg-gradient-to-b from-[#3ecf8e]/10 to-background">
+        <section className="relative pt-32 pb-20 bg-gradient-to-b from-[#dc2626]/10 to-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-block bg-[#3ecf8e]/10 text-[#3ecf8e] text-sm font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+            <div className="inline-block bg-[#dc2626]/10 text-[#dc2626] text-sm font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
               FAQ
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
-              Everything you need to know about EduNexus. Can't find what you're looking for?
+              Everything you need to know about Vhembe Rising Star Academy. Can't find what you're looking for?
               Contact our team directly.
             </p>
             <div className="max-w-xl mx-auto relative">
@@ -126,7 +126,7 @@ const FAQ = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search questions..."
-                className="w-full bg-white dark:bg-[#1c1c1c] border border-gray-200 dark:border-gray-700 rounded-xl pl-12 pr-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50"
+                className="w-full bg-white dark:bg-[#1c1c1c] border border-gray-200 dark:border-gray-700 rounded-xl pl-12 pr-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#dc2626]/50"
               />
             </div>
           </div>
@@ -138,7 +138,7 @@ const FAQ = () => {
             {filteredFaqs.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 mb-4">No questions match your search.</p>
-                <Link to="/contact" className="text-[#3ecf8e] font-bold hover:underline">
+                <Link to="/contact" className="text-[#dc2626] font-bold hover:underline">
                   Contact us instead →
                 </Link>
               </div>
@@ -166,7 +166,7 @@ const FAQ = () => {
                               {item.q}
                             </span>
                             {isOpen ? (
-                              <ChevronUp className="w-5 h-5 text-[#3ecf8e] shrink-0" />
+                              <ChevronUp className="w-5 h-5 text-[#dc2626] shrink-0" />
                             ) : (
                               <ChevronDown className="w-5 h-5 text-gray-400 shrink-0" />
                             )}
@@ -189,7 +189,7 @@ const FAQ = () => {
         {/* Still have questions */}
         <section className="py-16 bg-gray-50 dark:bg-[#1c1c1c]">
           <div className="max-w-4xl mx-auto px-4 text-center">
-            <MessageCircle className="w-12 h-12 text-[#3ecf8e] mx-auto mb-4" />
+            <MessageCircle className="w-12 h-12 text-[#dc2626] mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Still have questions?
             </h2>
@@ -198,7 +198,7 @@ const FAQ = () => {
             </p>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 bg-[#3ecf8e] text-black px-6 py-3 rounded-xl font-bold hover:bg-[#34b27b] transition-all"
+              className="inline-flex items-center gap-2 bg-[#dc2626] text-black px-6 py-3 rounded-xl font-bold hover:bg-[#b91c1c] transition-all"
             >
               Contact Us
             </Link>

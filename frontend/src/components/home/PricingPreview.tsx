@@ -19,7 +19,7 @@ const plans = [
     ],
     cta: "Get Started",
     ctaStyle:
-      "border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:border-[#3ecf8e] hover:text-[#3ecf8e]",
+      "border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:border-[#dc2626] hover:text-[#dc2626]",
     popular: false,
   },
   {
@@ -27,7 +27,7 @@ const plans = [
     price: "R 1 299",
     period: "/ month",
     tagline: "For growing primary & high schools",
-    color: "border-[#3ecf8e]",
+    color: "border-[#dc2626]",
     badge: "Most Popular",
     features: [
       "Up to 1 000 learners",
@@ -41,7 +41,7 @@ const plans = [
     ],
     cta: "Start Free Trial",
     ctaStyle:
-      "bg-[#3ecf8e] text-black hover:bg-[#34b27b] shadow-lg shadow-[#3ecf8e]/25",
+      "bg-[#dc2626] text-black hover:bg-[#b91c1c] shadow-lg shadow-[#dc2626]/25",
     popular: true,
   },
   {
@@ -63,7 +63,7 @@ const plans = [
     ],
     cta: "Contact Us",
     ctaStyle:
-      "border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:border-[#3ecf8e] hover:text-[#3ecf8e]",
+      "border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:border-[#dc2626] hover:text-[#dc2626]",
     popular: false,
   },
 ];
@@ -72,17 +72,17 @@ const PricingPreview = () => {
   return (
     <section id="pricing-preview" className="py-28 relative overflow-hidden">
       {/* Subtle background blobs */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#3ecf8e]/[0.03] blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#dc2626]/[0.03] blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#3ecf8e]/10 border border-[#3ecf8e]/20 text-[#3ecf8e] text-xs font-bold uppercase tracking-widest">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] text-xs font-bold uppercase tracking-widest">
             Pricing
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
             Simple, Transparent{" "}
-            <span className="text-[#3ecf8e]">Pricing</span>
+            <span className="text-[#dc2626]">Pricing</span>
           </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto text-lg">
             No hidden fees. No lock-in contracts. Cancel anytime. All plans
@@ -96,7 +96,7 @@ const PricingPreview = () => {
             </button>
             <button className="px-5 py-2 rounded-lg text-gray-500 dark:text-gray-400 font-semibold text-sm hover:text-gray-900 dark:hover:text-white transition-colors">
               Annual{" "}
-              <span className="text-[#3ecf8e] text-xs font-bold ml-1">
+              <span className="text-[#dc2626] text-xs font-bold ml-1">
                 Save 20%
               </span>
             </button>
@@ -110,14 +110,14 @@ const PricingPreview = () => {
               key={idx}
               className={`relative flex flex-col bg-white dark:bg-[#1a1a1a] border-2 ${plan.color} rounded-3xl p-8 transition-all duration-300 ${
                 plan.popular
-                  ? "shadow-2xl shadow-[#3ecf8e]/10 scale-[1.02]"
-                  : "hover:border-[#3ecf8e]/40 hover:shadow-xl"
+                  ? "shadow-2xl shadow-[#dc2626]/10 scale-[1.02]"
+                  : "hover:border-[#dc2626]/40 hover:shadow-xl"
               }`}
             >
               {/* Popular badge */}
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-[#3ecf8e] text-black text-xs font-black px-5 py-1.5 rounded-full shadow-lg shadow-[#3ecf8e]/30 uppercase tracking-wider">
+                  <span className="bg-[#dc2626] text-black text-xs font-black px-5 py-1.5 rounded-full shadow-lg shadow-[#dc2626]/30 uppercase tracking-wider">
                     {plan.badge}
                   </span>
                 </div>
@@ -148,7 +148,7 @@ const PricingPreview = () => {
               <ul className="space-y-3 mb-8 flex-1">
                 {plan.features.map((f, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600 dark:text-gray-300">
-                    <CheckCircle2 className="w-4 h-4 text-[#3ecf8e] shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-[#dc2626] shrink-0 mt-0.5" />
                     {f}
                   </li>
                 ))}
@@ -169,9 +169,9 @@ const PricingPreview = () => {
         {/* Bottom note */}
         <p className="text-center text-sm text-gray-400 dark:text-gray-600 mt-10">
           All plans include a{" "}
-          <span className="text-[#3ecf8e] font-semibold">30-day free trial</span>{" "}
+          <span className="text-[#dc2626] font-semibold">30-day free trial</span>{" "}
           — no credit card required.{" "}
-          <Link to="/pricing" className="text-[#3ecf8e] hover:underline font-semibold">
+          <Link to="/pricing" className="text-[#dc2626] hover:underline font-semibold">
             See full feature comparison →
           </Link>
         </p>

@@ -23,14 +23,14 @@ const Stats = () => {
     <section id="stats" className="py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16 space-y-4">
-          <h2 className="text-[#3ecf8e] font-bold tracking-widest uppercase text-sm">
+          <h2 className="text-[#dc2626] font-bold tracking-widest uppercase text-sm">
             Our Impact
           </h2>
           <h3 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
             Empowering South African Schools
           </h3>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            From rural schools in Limpopo to urban classrooms in Gauteng — EduNexus is
+            From rural schools in Limpopo to urban classrooms in Gauteng — Vhembe Rising Star Academy is
             helping educators deliver better outcomes for every learner.
           </p>
         </div>
@@ -46,8 +46,8 @@ const Stats = () => {
                 <AreaChart data={data}>
                   <defs>
                     <linearGradient id="colorGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3ecf8e" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#3ecf8e" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#dc2626" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#dc2626" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid
@@ -63,12 +63,12 @@ const Stats = () => {
                       border: "1px solid #ddd",
                       borderRadius: "8px",
                     }}
-                    itemStyle={{ color: "#3ecf8e" }}
+                    itemStyle={{ color: "#dc2626" }}
                   />
                   <Area
                     type="monotone"
                     dataKey="learners"
-                    stroke="#3ecf8e"
+                    stroke="#dc2626"
                     fillOpacity={1}
                     fill="url(#colorGrad)"
                     strokeWidth={3}
@@ -97,7 +97,7 @@ const Stats = () => {
                 icon: BookOpenCheck,
                 title: "Online Assessments",
                 desc: "Create, assign, and auto-mark tests aligned to CAPS Learning Areas.",
-                color: "text-[#3ecf8e]",
+                color: "text-[#dc2626]",
               },
               {
                 icon: Award,
@@ -108,7 +108,7 @@ const Stats = () => {
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="bg-white dark:bg-[#1c1c1c] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 flex items-start space-x-4 hover:border-[#3ecf8e]/30 transition-all cursor-default shadow-sm hover:shadow-md"
+                className="bg-white dark:bg-[#1c1c1c] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 flex items-start space-x-4 hover:border-[#dc2626]/30 transition-all cursor-default shadow-sm hover:shadow-md"
               >
                 <div
                   className={`p-3 rounded-lg bg-gray-50 dark:bg-[#121212] ${item.color}`}

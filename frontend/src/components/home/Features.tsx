@@ -42,9 +42,9 @@ const features = [
     desc: "Generate conflict-free, CAPS-aligned school timetables in minutes. Handle teacher availability, room allocation, and phase-based scheduling automatically.",
     tags: ["Administration"],
     badge: "Auto-generate",
-    badgeColor: "bg-[#3ecf8e]/10 text-[#3ecf8e] border-[#3ecf8e]/20",
-    iconColor: "text-[#3ecf8e]",
-    iconBg: "bg-[#3ecf8e]/10",
+    badgeColor: "bg-[#dc2626]/10 text-[#dc2626] border-[#dc2626]/20",
+    iconColor: "text-[#dc2626]",
+    iconBg: "bg-[#dc2626]/10",
     highlights: ["Conflict detection", "Room allocation", "Substitute planning"],
   },
   {
@@ -97,9 +97,9 @@ const features = [
     desc: "Create, distribute, and auto-mark quizzes and tests. Supports multiple question types including multiple-choice, short answer, and essay with AI marking.",
     tags: ["Learning", "Analytics"],
     badge: "AI Marking",
-    badgeColor: "bg-[#3ecf8e]/10 text-[#3ecf8e] border-[#3ecf8e]/20",
-    iconColor: "text-[#3ecf8e]",
-    iconBg: "bg-[#3ecf8e]/10",
+    badgeColor: "bg-[#dc2626]/10 text-[#dc2626] border-[#dc2626]/20",
+    iconColor: "text-[#dc2626]",
+    iconBg: "bg-[#dc2626]/10",
     highlights: ["Auto-marking", "Question bank", "Plagiarism detection"],
   },
 ];
@@ -115,18 +115,18 @@ const Features = () => {
   return (
     <section id="features" className="py-28 relative overflow-hidden">
       {/* Background blobs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#3ecf8e]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#dc2626]/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-16 space-y-4">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#3ecf8e]/10 border border-[#3ecf8e]/20 text-[#3ecf8e] text-xs font-bold uppercase tracking-widest">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] text-xs font-bold uppercase tracking-widest">
             Platform Features
           </span>
           <h2 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight">
             Everything Your School{" "}
-            <span className="text-[#3ecf8e]">Needs to Thrive</span>
+            <span className="text-[#dc2626]">Needs to Thrive</span>
           </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
             A comprehensive, all-in-one platform built for South African schools —
@@ -142,8 +142,8 @@ const Features = () => {
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2 rounded-full text-sm font-semibold border transition-all duration-200 ${
                 activeCategory === cat
-                  ? "bg-[#3ecf8e] text-black border-[#3ecf8e] shadow-lg shadow-[#3ecf8e]/20"
-                  : "bg-transparent border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-[#3ecf8e]/50 hover:text-[#3ecf8e]"
+                  ? "bg-[#dc2626] text-black border-[#dc2626] shadow-lg shadow-[#dc2626]/20"
+                  : "bg-transparent border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-[#dc2626]/50 hover:text-[#dc2626]"
               }`}
             >
               {cat}
@@ -156,7 +156,7 @@ const Features = () => {
           {filtered.map((feature, idx) => (
             <div
               key={idx}
-              className="group relative bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-800 rounded-2xl p-6 hover:border-[#3ecf8e]/40 hover:shadow-xl hover:shadow-[#3ecf8e]/5 transition-all duration-300 flex flex-col"
+              className="group relative bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-800 rounded-2xl p-6 hover:border-[#dc2626]/40 hover:shadow-xl hover:shadow-[#dc2626]/5 transition-all duration-300 flex flex-col"
             >
               {/* Top badge */}
               <div className="flex items-start justify-between mb-4">
@@ -181,7 +181,7 @@ const Features = () => {
               <ul className="space-y-1.5 mt-auto">
                 {feature.highlights.map((h, i) => (
                   <li key={i} className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#3ecf8e] shrink-0" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#dc2626] shrink-0" />
                     {h}
                   </li>
                 ))}

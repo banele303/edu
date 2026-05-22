@@ -5,12 +5,12 @@ const posts = [
   {
     slug: "caps-alignment-2025",
     category: "Curriculum",
-    categoryColor: "bg-[#3ecf8e]/10 text-[#3ecf8e] border-[#3ecf8e]/20",
+    categoryColor: "bg-[#dc2626]/10 text-[#dc2626] border-[#dc2626]/20",
     title: "What CAPS 2025 Changes Mean for Your School",
     excerpt:
-      "The DBE released updated CAPS guidelines for 2025. We break down the key curriculum shifts and how EduNexus automatically adapts your assessment schedules and timetables.",
+      "The DBE released updated CAPS guidelines for 2025. We break down the key curriculum shifts and how Vhembe Rising Star Academy automatically adapts your assessment schedules and timetables.",
     image: "/blog_caps_2025.png",
-    author: "EduNexus Editorial",
+    author: "Vhembe Rising Star Academy Editorial",
     authorAvatar: "https://i.pravatar.cc/40?img=10",
     date: "15 May 2025",
     readTime: "5 min read",
@@ -22,7 +22,7 @@ const posts = [
     categoryColor: "bg-purple-500/10 text-purple-400 border-purple-500/20",
     title: "How AI Tutoring is Helping Grade 12 Learners Ace Matric",
     excerpt:
-      "Schools using EduNexus's AI Study Buddy saw an average 22% improvement in NSC trial exam scores. Here's the data — and the method behind the results.",
+      "Schools using Vhembe Rising Star Academy's AI Study Buddy saw an average 22% improvement in NSC trial exam scores. Here's the data — and the method behind the results.",
     image: "/blog_ai_tutoring.png",
     author: "Dr. Amahle Zulu",
     authorAvatar: "https://i.pravatar.cc/40?img=45",
@@ -36,7 +36,7 @@ const posts = [
     categoryColor: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
     title: "POPIA & School Data: What Every Principal Must Know",
     excerpt:
-      "With POPIA enforcement now fully active, schools face real liability for data misuse. We outline the key obligations and how EduNexus keeps you compliant automatically.",
+      "With POPIA enforcement now fully active, schools face real liability for data misuse. We outline the key obligations and how Vhembe Rising Star Academy keeps you compliant automatically.",
     image: "/blog_popia_compliance.png",
     author: "Legal Desk",
     authorAvatar: "https://i.pravatar.cc/40?img=15",
@@ -69,17 +69,17 @@ const Blog = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="space-y-4">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-[#3ecf8e]/10 border border-[#3ecf8e]/20 text-[#3ecf8e] text-xs font-bold uppercase tracking-widest">
-              Latest from EduNexus
+            <span className="inline-block px-4 py-1.5 rounded-full bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] text-xs font-bold uppercase tracking-widest">
+              Latest from Vhembe Rising Star Academy
             </span>
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
               Insights &{" "}
-              <span className="text-[#3ecf8e]">Education News</span>
+              <span className="text-[#dc2626]">Education News</span>
             </h2>
           </div>
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-[#3ecf8e] font-bold hover:underline text-sm shrink-0"
+            className="inline-flex items-center gap-2 text-[#dc2626] font-bold hover:underline text-sm shrink-0"
           >
             View all articles <ArrowRight className="w-4 h-4" />
           </Link>
@@ -131,7 +131,7 @@ const Blog = () => {
             {rest.map((post, idx) => (
               <div
                 key={idx}
-                className="group flex gap-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-800 rounded-2xl p-5 hover:border-[#3ecf8e]/30 hover:shadow-lg transition-all duration-300 cursor-pointer"
+                className="group flex gap-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-800 rounded-2xl p-5 hover:border-[#dc2626]/30 hover:shadow-lg transition-all duration-300 cursor-pointer"
               >
                 {/* Thumbnail */}
                 <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0">
@@ -150,7 +150,7 @@ const Blog = () => {
                     >
                       {post.category}
                     </span>
-                    <h4 className="text-sm font-bold text-gray-900 dark:text-white mt-2 leading-snug line-clamp-2 group-hover:text-[#3ecf8e] transition-colors">
+                    <h4 className="text-sm font-bold text-gray-900 dark:text-white mt-2 leading-snug line-clamp-2 group-hover:text-[#dc2626] transition-colors">
                       {post.title}
                     </h4>
                   </div>
@@ -169,21 +169,21 @@ const Blog = () => {
             ))}
 
             {/* Newsletter mini-card */}
-            <div className="bg-gradient-to-br from-[#3ecf8e]/10 to-[#3ecf8e]/5 border border-[#3ecf8e]/20 rounded-2xl p-6">
-              <Tag className="w-6 h-6 text-[#3ecf8e] mb-3" />
+            <div className="bg-gradient-to-br from-[#dc2626]/10 to-[#dc2626]/5 border border-[#dc2626]/20 rounded-2xl p-6">
+              <Tag className="w-6 h-6 text-[#dc2626] mb-3" />
               <h4 className="font-bold text-gray-900 dark:text-white mb-1 text-sm">
                 Education Digest
               </h4>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
-                Get weekly curriculum updates, EdTech tips and EduNexus news delivered to your inbox.
+                Get weekly curriculum updates, EdTech tips and Vhembe Rising Star Academy news delivered to your inbox.
               </p>
               <div className="flex gap-2">
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="flex-1 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-[#3ecf8e] min-w-0"
+                  className="flex-1 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-[#dc2626] min-w-0"
                 />
-                <button className="bg-[#3ecf8e] text-black px-3 py-2 rounded-lg text-xs font-bold hover:bg-[#34b27b] transition-colors shrink-0">
+                <button className="bg-[#dc2626] text-black px-3 py-2 rounded-lg text-xs font-bold hover:bg-[#b91c1c] transition-colors shrink-0">
                   Subscribe
                 </button>
               </div>

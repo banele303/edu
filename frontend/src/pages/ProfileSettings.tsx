@@ -59,7 +59,7 @@ export default function ProfileSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5 text-[#3ecf8e]" />
+            <User className="h-5 w-5 text-[#dc2626]" />
             Personal Information
           </CardTitle>
           <CardDescription>Update your personal details and contact information.</CardDescription>
@@ -67,7 +67,7 @@ export default function ProfileSettings() {
         <CardContent className="space-y-6">
           <div className="flex items-center gap-6">
             <Avatar className="h-20 w-20">
-              <AvatarFallback className="bg-[#3ecf8e]/10 text-[#3ecf8e] text-2xl font-bold">
+              <AvatarFallback className="bg-[#dc2626]/10 text-[#dc2626] text-2xl font-bold">
                 {user.name?.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "U"}
               </AvatarFallback>
             </Avatar>
@@ -116,11 +116,11 @@ export default function ProfileSettings() {
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Tell us about yourself..."
-              className="w-full bg-background border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50 resize-none"
+              className="w-full bg-background border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#dc2626]/50 resize-none"
             />
           </div>
 
-          <Button onClick={handleSave} disabled={saving} className="bg-[#3ecf8e] text-black hover:bg-[#34b27b]">
+          <Button onClick={handleSave} disabled={saving} className="bg-[#dc2626] text-black hover:bg-[#b91c1c]">
             <Save className="w-4 h-4 mr-2" />
             {saving ? "Saving..." : "Save Changes"}
           </Button>
@@ -131,7 +131,7 @@ export default function ProfileSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Bell className="h-5 w-5 text-[#3ecf8e]" />
+            <Bell className="h-5 w-5 text-[#dc2626]" />
             Notification Preferences
           </CardTitle>
           <CardDescription>Choose what notifications you'd like to receive.</CardDescription>
@@ -152,7 +152,7 @@ export default function ProfileSettings() {
               <input
                 type="checkbox"
                 defaultChecked={item.default}
-                className="w-4 h-4 rounded border-gray-300 text-[#3ecf8e] focus:ring-[#3ecf8e]"
+                className="w-4 h-4 rounded border-gray-300 text-[#dc2626] focus:ring-[#dc2626]"
               />
             </div>
           ))}
@@ -163,7 +163,7 @@ export default function ProfileSettings() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-[#3ecf8e]" />
+            <Shield className="h-5 w-5 text-[#dc2626]" />
             Security
           </CardTitle>
         </CardHeader>

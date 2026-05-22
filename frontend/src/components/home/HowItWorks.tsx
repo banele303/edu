@@ -6,9 +6,9 @@ const steps = [
     icon: ClipboardCheck,
     title: "Register Your School",
     desc: "Submit your school details and DBE registration number. Our team verifies and onboards your institution within 24 hours — no paperwork needed.",
-    color: "text-[#3ecf8e]",
-    bg: "bg-[#3ecf8e]/10",
-    border: "border-[#3ecf8e]/30",
+    color: "text-[#dc2626]",
+    bg: "bg-[#dc2626]/10",
+    border: "border-[#dc2626]/30",
   },
   {
     number: "02",
@@ -47,7 +47,7 @@ const HowItWorks = () => {
         className="absolute inset-0 opacity-[0.02] dark:opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(#3ecf8e 1px, transparent 1px), linear-gradient(90deg, #3ecf8e 1px, transparent 1px)",
+            "linear-gradient(#dc2626 1px, transparent 1px), linear-gradient(90deg, #dc2626 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
@@ -55,15 +55,15 @@ const HowItWorks = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center mb-20 space-y-4">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#3ecf8e]/10 border border-[#3ecf8e]/20 text-[#3ecf8e] text-xs font-bold uppercase tracking-widest">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#dc2626]/10 border border-[#dc2626]/20 text-[#dc2626] text-xs font-bold uppercase tracking-widest">
             How It Works
           </span>
           <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
             Up & Running in{" "}
-            <span className="text-[#3ecf8e]">4 Simple Steps</span>
+            <span className="text-[#dc2626]">4 Simple Steps</span>
           </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto text-lg">
-            From onboarding to fully operational — EduNexus gets your school
+            From onboarding to fully operational — Vhembe Rising Star Academy gets your school
             digitised quickly and confidently.
           </p>
         </div>
@@ -71,7 +71,7 @@ const HowItWorks = () => {
         {/* Steps */}
         <div className="relative">
           {/* Horizontal connector line (desktop) */}
-          <div className="hidden lg:block absolute top-16 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-[#3ecf8e]/30 to-transparent z-0" />
+          <div className="hidden lg:block absolute top-16 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-[#dc2626]/30 to-transparent z-0" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
             {steps.map((step, idx) => (
@@ -101,7 +101,7 @@ const HowItWorks = () => {
         {/* Bottom CTA strip */}
         <div className="mt-20 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-gray-800 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#3ecf8e] mb-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#dc2626] mb-1">
               No setup fees
             </p>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -114,13 +114,13 @@ const HowItWorks = () => {
           <div className="flex gap-3 shrink-0">
             <a
               href="/login"
-              className="bg-[#3ecf8e] text-black px-7 py-3 rounded-xl font-bold hover:bg-[#34b27b] transition-all hover:scale-105 shadow-lg shadow-[#3ecf8e]/20"
+              className="bg-[#dc2626] text-black px-7 py-3 rounded-xl font-bold hover:bg-[#b91c1c] transition-all hover:scale-105 shadow-lg shadow-[#dc2626]/20"
             >
               Start Free Trial
             </a>
             <a
               href="/contact"
-              className="border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-7 py-3 rounded-xl font-bold hover:border-[#3ecf8e] hover:text-[#3ecf8e] transition-all"
+              className="border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-7 py-3 rounded-xl font-bold hover:border-[#dc2626] hover:text-[#dc2626] transition-all"
             >
               Book a Demo
             </a>

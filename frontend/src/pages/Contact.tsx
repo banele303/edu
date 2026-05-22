@@ -28,10 +28,10 @@ const Contact = () => {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="relative pt-32 pb-20 bg-gradient-to-b from-[#3ecf8e]/10 to-background">
+        <section className="relative pt-32 pb-20 bg-gradient-to-b from-[#dc2626]/10 to-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl">
-              <div className="inline-block bg-[#3ecf8e]/10 text-[#3ecf8e] text-sm font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+              <div className="inline-block bg-[#dc2626]/10 text-[#dc2626] text-sm font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
                 Contact Us
               </div>
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
@@ -54,8 +54,8 @@ const Contact = () => {
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Get in Touch</h3>
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">
-                      <div className="bg-[#3ecf8e]/10 p-3 rounded-xl shrink-0">
-                        <MapPin className="w-5 h-5 text-[#3ecf8e]" />
+                      <div className="bg-[#dc2626]/10 p-3 rounded-xl shrink-0">
+                        <MapPin className="w-5 h-5 text-[#dc2626]" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Head Office</p>
@@ -63,8 +63,8 @@ const Contact = () => {
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <div className="bg-[#3ecf8e]/10 p-3 rounded-xl shrink-0">
-                        <Phone className="w-5 h-5 text-[#3ecf8e]" />
+                      <div className="bg-[#dc2626]/10 p-3 rounded-xl shrink-0">
+                        <Phone className="w-5 h-5 text-[#dc2626]" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Phone</p>
@@ -73,18 +73,18 @@ const Contact = () => {
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <div className="bg-[#3ecf8e]/10 p-3 rounded-xl shrink-0">
-                        <Mail className="w-5 h-5 text-[#3ecf8e]" />
+                      <div className="bg-[#dc2626]/10 p-3 rounded-xl shrink-0">
+                        <Mail className="w-5 h-5 text-[#dc2626]" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Email</p>
-                        <p className="text-gray-500 text-sm">info@edunexus.co.za</p>
-                        <p className="text-gray-500 text-sm">support@edunexus.co.za</p>
+                        <p className="text-gray-500 text-sm">info@Vhembe Rising Star Academy.co.za</p>
+                        <p className="text-gray-500 text-sm">support@Vhembe Rising Star Academy.co.za</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-4">
-                      <div className="bg-[#3ecf8e]/10 p-3 rounded-xl shrink-0">
-                        <Clock className="w-5 h-5 text-[#3ecf8e]" />
+                      <div className="bg-[#dc2626]/10 p-3 rounded-xl shrink-0">
+                        <Clock className="w-5 h-5 text-[#dc2626]" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">Response Time</p>
@@ -99,7 +99,7 @@ const Contact = () => {
                   <p className="text-sm text-gray-500 mb-4">
                     For district-wide deployments, SITA procurement, or government partnerships:
                   </p>
-                  <p className="text-sm font-medium text-[#3ecf8e]">enterprise@edunexus.co.za</p>
+                  <p className="text-sm font-medium text-[#dc2626]">enterprise@Vhembe Rising Star Academy.co.za</p>
                 </div>
               </div>
 
@@ -107,7 +107,7 @@ const Contact = () => {
               <div className="md:col-span-2">
                 <div className="bg-white dark:bg-[#1c1c1c] rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-sm">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-[#3ecf8e]" />
+                    <MessageSquare className="w-5 h-5 text-[#dc2626]" />
                     Send Us a Message
                   </h3>
                   <form onSubmit={handleSubmit} className="space-y-5">
@@ -120,7 +120,7 @@ const Contact = () => {
                           type="text"
                           value={form.name}
                           onChange={(e) => setForm({ ...form, name: e.target.value })}
-                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50"
+                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#dc2626]/50"
                           placeholder="Your name"
                         />
                       </div>
@@ -132,7 +132,7 @@ const Contact = () => {
                           type="email"
                           value={form.email}
                           onChange={(e) => setForm({ ...form, email: e.target.value })}
-                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50"
+                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#dc2626]/50"
                           placeholder="you@school.co.za"
                         />
                       </div>
@@ -146,7 +146,7 @@ const Contact = () => {
                           type="text"
                           value={form.school}
                           onChange={(e) => setForm({ ...form, school: e.target.value })}
-                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50"
+                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#dc2626]/50"
                           placeholder="School name"
                         />
                       </div>
@@ -157,7 +157,7 @@ const Contact = () => {
                         <select
                           value={form.role}
                           onChange={(e) => setForm({ ...form, role: e.target.value })}
-                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50"
+                          className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#dc2626]/50"
                         >
                           <option value="">Select role...</option>
                           <option value="principal">Principal / Headmaster</option>
@@ -177,14 +177,14 @@ const Contact = () => {
                         rows={5}
                         value={form.message}
                         onChange={(e) => setForm({ ...form, message: e.target.value })}
-                        className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3ecf8e]/50 resize-none"
+                        className="w-full bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#dc2626]/50 resize-none"
                         placeholder="Tell us about your school and how we can help..."
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={sending}
-                      className="w-full bg-[#3ecf8e] text-black px-6 py-4 rounded-xl font-bold text-lg hover:bg-[#34b27b] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="w-full bg-[#dc2626] text-black px-6 py-4 rounded-xl font-bold text-lg hover:bg-[#b91c1c] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                       {sending ? (
                         <>Sending...</>
@@ -213,7 +213,7 @@ const Contact = () => {
             </p>
             <Link
               to="/faq"
-              className="inline-flex items-center gap-2 text-[#3ecf8e] font-bold hover:underline"
+              className="inline-flex items-center gap-2 text-[#dc2626] font-bold hover:underline"
             >
               Visit FAQ Page →
             </Link>

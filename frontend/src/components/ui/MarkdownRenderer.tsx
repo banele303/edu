@@ -49,7 +49,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         parts.push(<em key={`italic-${index}`} className="italic text-muted-foreground">{firstMatch.content}</em>);
       } else if (firstMatch.type === "code") {
         parts.push(
-          <code key={`code-${index}`} className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-[#3ecf8e]">
+          <code key={`code-${index}`} className="px-1.5 py-0.5 rounded bg-muted font-mono text-xs text-[#dc2626]">
             {firstMatch.content}
           </code>
         );

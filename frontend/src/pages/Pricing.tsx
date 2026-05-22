@@ -66,9 +66,9 @@ const Pricing = () => {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="relative pt-32 pb-20 bg-gradient-to-b from-[#3ecf8e]/10 to-background">
+        <section className="relative pt-32 pb-20 bg-gradient-to-b from-[#dc2626]/10 to-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-block bg-[#3ecf8e]/10 text-[#3ecf8e] text-sm font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+            <div className="inline-block bg-[#dc2626]/10 text-[#dc2626] text-sm font-bold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
               Pricing
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
@@ -90,18 +90,18 @@ const Pricing = () => {
                   key={plan.name}
                   className={`relative rounded-2xl p-8 border ${
                     plan.popular
-                      ? "border-[#3ecf8e] bg-[#3ecf8e]/5 shadow-xl scale-105"
+                      ? "border-[#dc2626] bg-[#dc2626]/5 shadow-xl scale-105"
                       : "border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1c1c1c]"
                   }`}
                 >
                   {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#3ecf8e] text-black text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#dc2626] text-black text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1">
                       <Star className="w-3 h-3" /> MOST POPULAR
                     </div>
                   )}
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="bg-[#3ecf8e]/10 p-2.5 rounded-xl">
-                      <plan.icon className="w-6 h-6 text-[#3ecf8e]" />
+                    <div className="bg-[#dc2626]/10 p-2.5 rounded-xl">
+                      <plan.icon className="w-6 h-6 text-[#dc2626]" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
                   </div>
@@ -113,7 +113,7 @@ const Pricing = () => {
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <Check className="w-4 h-4 text-[#3ecf8e] shrink-0 mt-0.5" />
+                        <Check className="w-4 h-4 text-[#dc2626] shrink-0 mt-0.5" />
                         {f}
                       </li>
                     ))}
@@ -122,7 +122,7 @@ const Pricing = () => {
                     to="/login"
                     className={`block text-center py-3 rounded-xl font-bold transition-all ${
                       plan.popular
-                        ? "bg-[#3ecf8e] text-black hover:bg-[#34b27b]"
+                        ? "bg-[#dc2626] text-black hover:bg-[#b91c1c]"
                         : "border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                     }`}
                   >
@@ -152,7 +152,7 @@ const Pricing = () => {
                 "Free onboarding",
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <Check className="w-4 h-4 text-[#3ecf8e] shrink-0" />
+                  <Check className="w-4 h-4 text-[#dc2626] shrink-0" />
                   {item}
                 </div>
               ))}
@@ -172,7 +172,7 @@ const Pricing = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link
                 to="/contact"
-                className="bg-[#3ecf8e] text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#34b27b] transition-all"
+                className="bg-[#dc2626] text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#b91c1c] transition-all"
               >
                 Book a Demo
               </Link>

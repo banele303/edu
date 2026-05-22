@@ -80,7 +80,7 @@ export default function StudyBuddyPage() {
       <div className="w-72 border-r bg-gray-50 dark:bg-[#1c1c1c] flex flex-col shrink-0">
         <div className="p-4 border-b space-y-3">
           <div className="flex items-center gap-2">
-            <div className="bg-[#3ecf8e] p-2 rounded-lg">
+            <div className="bg-[#dc2626] p-2 rounded-lg">
               <Bot className="w-5 h-5 text-black" />
             </div>
             <div>
@@ -121,9 +121,9 @@ export default function StudyBuddyPage() {
         </div>
 
         <div className="p-4 border-t">
-          <div className="bg-[#3ecf8e]/10 rounded-lg p-3">
+          <div className="bg-[#dc2626]/10 rounded-lg p-3">
             <p className="text-xs text-muted-foreground">
-              <Sparkles className="w-3 h-3 inline text-[#3ecf8e] mr-1" />
+              <Sparkles className="w-3 h-3 inline text-[#dc2626] mr-1" />
               EduBot uses your school's study materials to provide accurate, curriculum-aligned answers.
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function StudyBuddyPage() {
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="h-14 border-b px-6 flex items-center gap-3 shrink-0 bg-white dark:bg-[#121212]">
-          <MessageSquare className="h-5 w-5 text-[#3ecf8e]" />
+          <MessageSquare className="h-5 w-5 text-[#dc2626]" />
           <div>
             <p className="font-medium text-sm">Study with EduBot</p>
             <p className="text-xs text-muted-foreground">
@@ -159,14 +159,14 @@ export default function StudyBuddyPage() {
                 className={cn(
                   "max-w-[75%] rounded-2xl px-4 py-3 text-sm",
                   msg.role === "user"
-                    ? "bg-[#3ecf8e] text-black rounded-tr-sm"
+                    ? "bg-[#dc2626] text-black rounded-tr-sm"
                     : "bg-muted rounded-tl-sm"
                 )}
               >
                 {msg.role === "assistant" && (
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <Bot className="w-3.5 h-3.5 text-[#3ecf8e]" />
-                    <span className="text-[10px] font-bold text-[#3ecf8e]">EduBot</span>
+                    <Bot className="w-3.5 h-3.5 text-[#dc2626]" />
+                    <span className="text-[10px] font-bold text-[#dc2626]">EduBot</span>
                   </div>
                 )}
                 <div className="whitespace-normal leading-relaxed text-sm select-text">
@@ -178,7 +178,7 @@ export default function StudyBuddyPage() {
           {isLoading && (
             <div className="flex justify-start">
               <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-[#3ecf8e]" />
+                <Loader2 className="w-4 h-4 animate-spin text-[#dc2626]" />
                 <span className="text-sm text-muted-foreground">EduBot is thinking...</span>
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function StudyBuddyPage() {
             />
             <Button
               size="icon"
-              className="h-[52px] w-[52px] shrink-0 bg-[#3ecf8e] text-black hover:bg-[#34b27b]"
+              className="h-[52px] w-[52px] shrink-0 bg-[#dc2626] text-black hover:bg-[#b91c1c]"
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
             >

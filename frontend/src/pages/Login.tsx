@@ -1,6 +1,5 @@
 import UniversalUserForm from "@/components/auth/UniversalUserForm";
 import { useAuth } from "@/hooks/AuthProvider";
-import { GraduationCap } from "lucide-react";
 import { Link, Navigate } from "react-router";
 import { useState } from "react";
 
@@ -20,11 +19,13 @@ const Login = () => {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="bg-[#3ecf8e] text-black flex size-7 items-center justify-center rounded-md">
-              <GraduationCap className="size-4" />
-            </div>
+            <img
+              src="/logo-school.jpeg"
+              alt="Vhembe Rising Star Academy logo"
+              className="size-9 rounded-md border border-red-200 bg-white object-cover"
+            />
             <span>
-              EDU<span className="text-[#3ecf8e]">NEXUS</span>
+              Vhembe<span className="text-[#dc2626]"> Rising Star</span>
             </span>
           </Link>
         </div>
@@ -34,7 +35,7 @@ const Login = () => {
             {/* Header */}
             <div className="flex flex-col gap-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                {mode === "login" ? "Welcome back 👋" : "Join EduNexus"}
+                {mode === "login" ? "Welcome back" : "Join Vhembe Rising Star Academy"}
               </h1>
               <p className="text-muted-foreground text-sm">
                 {mode === "login"
@@ -50,10 +51,10 @@ const Login = () => {
             <div className="text-center text-sm">
               {mode === "login" ? (
                 <>
-                  New to EduNexus?{" "}
+                  New to Vhembe Rising Star Academy?{" "}
                   <button
                     onClick={() => setMode("create")}
-                    className="font-semibold underline underline-offset-4 hover:text-[#3ecf8e]"
+                    className="font-semibold underline underline-offset-4 hover:text-[#dc2626]"
                   >
                     Create an account
                   </button>
@@ -63,7 +64,7 @@ const Login = () => {
                   Already registered?{" "}
                   <button
                     onClick={() => setMode("login")}
-                    className="font-semibold underline underline-offset-4 hover:text-[#3ecf8e]"
+                    className="font-semibold underline underline-offset-4 hover:text-[#dc2626]"
                   >
                     Sign in
                   </button>
@@ -90,14 +91,14 @@ const Login = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-12 left-10 right-10 text-white">
-          <div className="inline-block bg-[#3ecf8e] text-black text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+          <div className="inline-block bg-[#dc2626] text-black text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
             CAPS Aligned
           </div>
           <h2 className="text-3xl font-bold mb-2">
             Built for South African Schools
           </h2>
           <p className="text-gray-200 text-sm max-w-sm">
-            From Grade R to Matric — EduNexus helps schools manage learners, timetables,
+            From Grade R to Matric, Vhembe Rising Star Academy helps schools manage learners, timetables,
             assessments and reports, all in one place.
           </p>
         </div>
