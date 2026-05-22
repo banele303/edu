@@ -1,7 +1,7 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install --include=dev",
-  "outputDirectory": "dist",
+  "outputDirectory": "frontend/dist",
   "env": {
     "NPM_CONFIG_PRODUCTION": "false"
   },
