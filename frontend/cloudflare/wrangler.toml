@@ -1,0 +1,21 @@
+name = "edunexus-ai"
+main = "src/index.ts"
+compatibility_date = "2024-04-05"
+
+# R2 Bucket for Study Materials and Assignments
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "edunexus-storage"
+
+# Vectorize Index for RAG Search
+[[vectorize]]
+binding = "VECTOR_INDEX"
+index_name = "edunexus-materials"
+
+# AI Binding for Llama 3 / Embeddings
+[ai]
+binding = "AI"
+
+[vars]
+# Public URL for R2 objects (custom domain or r2.dev). Leave empty to use /api/files/:key in dev.
+R2_PUBLIC_URL = ""

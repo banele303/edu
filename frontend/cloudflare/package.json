@@ -1,0 +1,20 @@
+{
+  "name": "edunexus-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for EduNexus AI and R2 storage",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "hono": "^4.2.0",
+    "unpdf": "^0.12.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260516.1",
+    "typescript": "^5.0.4",
+    "wrangler": "^4.92.0"
+  }
+}

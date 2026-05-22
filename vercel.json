@@ -1,4 +1,10 @@
 {
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --include=dev",
+  "outputDirectory": "dist",
+  "env": {
+    "NPM_CONFIG_PRODUCTION": "false"
+  },
   "rewrites": [
     {
       "source": "/(.*)",

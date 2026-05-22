@@ -1,0 +1,474 @@
+import { defineSchema, defineTable } from "convex/server";
+import { authTables } from "@convex-dev/auth/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  ...authTables,
+  users: defineTable({
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+
+    // Custom fields for Edunexus
+    role: v.optional(
+      v.union(
+        v.literal("admin"),
+        v.literal("teacher"),
+        v.literal("student"),
+        v.literal("parent")
+      )
+    ),
+    isActive: v.optional(v.boolean()),
+    studentClass: v.optional(v.id("classes")),
+    teacherSubject: v.optional(v.array(v.id("subjects"))),
+    linkedStudent: v.optional(v.id("users")), // for parents
+    bio: v.optional(v.string()),
+    dateOfBirth: v.optional(v.string()),
+  }).index("email", ["email"]),
+
+  academicYears: defineTable({
+    name: v.string(),
+    fromYear: v.string(),
+    toYear: v.string(),
+    isCurrent: v.boolean(),
+  }),
+
+  classes: defineTable({
+    name: v.string(),
+    academicYear: v.id("academicYears"),
+    classTeacher: v.optional(v.id("users")),
+    subjects: v.array(v.id("subjects")),
+    students: v.array(v.id("users")),
+    capacity: v.number(),
+  }).index("by_name_year", ["name", "academicYear"]),
+
+  subjects: defineTable({
+    name: v.string(),
+    code: v.string(),
+    teacher: v.optional(v.array(v.id("users"))),
+    isActive: v.boolean(),
+    // Category determines which question types are recommended
+    // "maths", "science", "language", "humanities", "life_skills", "arts", "technology", "other"
+    category: v.optional(v.string()),
+    grade: v.optional(v.number()),
+  }).index("by_code", ["code"])
+    .index("by_category", ["category"]),
+
+  timetables: defineTable({
+    class: v.id("classes"),
+    academicYear: v.id("academicYears"),
+    schedule: v.array(
+      v.object({
+        day: v.string(),
+        periods: v.array(
+          v.object({
+            subject: v.optional(v.id("subjects")),
+            teacher: v.optional(v.id("users")),
+            startTime: v.string(),
+            endTime: v.string(),
+            type: v.optional(v.string()),
+            isBreak: v.optional(v.boolean()),
+            label: v.optional(v.string()),
+          })
+        ),
+      })
+    ),
+    overrides: v.optional(
+      v.array(
+        v.object({
+          date: v.string(), // ISO "YYYY-MM-DD"
+          label: v.optional(v.string()),
+          periods: v.array(
+            v.object({
+              subject: v.optional(v.id("subjects")),
+              teacher: v.optional(v.id("users")),
+              startTime: v.string(),
+              endTime: v.string(),
+              type: v.optional(v.string()),
+              isBreak: v.optional(v.boolean()),
+              label: v.optional(v.string()),
+            })
+          ),
+        })
+      )
+    ),
+  }),
+
+  exams: defineTable({
+    title: v.string(),
+    subject: v.id("subjects"),
+    class: v.id("classes"),
+    teacher: v.id("users"),
+    duration: v.number(),
+    dueDate: v.string(),
+    isActive: v.boolean(),
+    // "quiz" = self-paced student practice, "exam" = formal timed assessment
+    examType: v.union(v.literal("quiz"), v.literal("exam")),
+    // For quizzes: allow multiple attempts
+    maxAttempts: v.optional(v.number()),
+    // For quizzes: show instant feedback after each question
+    instantFeedback: v.optional(v.boolean()),
+    // Syllabus topics this exam covers
+    syllabusTopics: v.optional(v.array(v.string())),
+    // Subject category for question type recommendations
+    subjectCategory: v.optional(v.string()),
+    // Total points (computed)
+    totalPoints: v.optional(v.number()),
+    // Exam template used (if any)
+    templateUsed: v.optional(v.string()),
+    questions: v.array(
+      v.object({
+        questionText: v.string(),
+        type: v.union(
+          v.literal("MCQ"),
+          v.literal("SHORT_ANSWER"),
+          v.literal("ESSAY"),
+          v.literal("TRUE_FALSE"),
+          v.literal("FILL_BLANK"),
+          v.literal("MATCH_COLUMN"),
+          v.literal("CALCULATION"),
+          v.literal("DIAGRAM_LABEL")
+        ),
+        options: v.optional(v.array(v.string())),
+        correctAnswer: v.string(),
+        points: v.number(),
+        // Which syllabus topic this question tests
+        topic: v.optional(v.string()),
+        // Difficulty per question
+        difficulty: v.optional(v.string()),
+        // For MATCH_COLUMN: pairs of items
+        matchPairs: v.optional(v.array(v.object({ left: v.string(), right: v.string() }))),
+        // For DIAGRAM_LABEL: image URL
+        diagramUrl: v.optional(v.string()),
+        // Source question bank ID if reused
+        bankQuestionId: v.optional(v.string()),
+      })
+    ),
+  }).index("by_type", ["examType"])
+    .index("by_teacher_type", ["teacher", "examType"])
+    .index("by_class_type", ["class", "examType"]),
+
+  submissions: defineTable({
+    exam: v.id("exams"),
+    student: v.id("users"),
+    answers: v.array(
+      v.object({
+        questionId: v.string(),
+        answer: v.string(),
+      })
+    ),
+    score: v.number(),
+    aiFeedback: v.optional(v.string()),
+    // Track attempt number for quizzes
+    attemptNumber: v.optional(v.number()),
+  }),
+
+  // Reusable question bank — questions generated or manually added
+  questionBank: defineTable({
+    questionText: v.string(),
+    type: v.union(
+      v.literal("MCQ"),
+      v.literal("SHORT_ANSWER"),
+      v.literal("ESSAY"),
+      v.literal("TRUE_FALSE"),
+      v.literal("FILL_BLANK"),
+      v.literal("MATCH_COLUMN"),
+      v.literal("CALCULATION"),
+      v.literal("DIAGRAM_LABEL")
+    ),
+    options: v.optional(v.array(v.string())),
+    correctAnswer: v.string(),
+    points: v.number(),
+    topic: v.optional(v.string()),
+    subTopic: v.optional(v.string()),
+    difficulty: v.optional(v.string()),
+    subject: v.optional(v.id("subjects")),
+    grade: v.optional(v.number()),
+    matchPairs: v.optional(v.array(v.object({ left: v.string(), right: v.string() }))),
+    diagramUrl: v.optional(v.string()),
+    createdBy: v.id("users"),
+    timesUsed: v.optional(v.number()),
+    tags: v.array(v.string()),
+    isPublished: v.boolean(),
+  }).index("by_subject", ["subject"])
+    .index("by_topic", ["topic"])
+    .index("by_type", ["type"])
+    .index("by_created_by", ["createdBy"])
+    .index("by_published", ["isPublished"]),
+
+  // Exam templates for quick generation
+  examTemplates: defineTable({
+    name: v.string(),
+    description: v.string(),
+    icon: v.string(),
+    // Template config
+    examType: v.union(v.literal("quiz"), v.literal("exam")),
+    defaultDuration: v.number(),
+    defaultQuestionCount: v.number(),
+    questionTypeMix: v.array(v.object({
+      type: v.string(),
+      count: v.number(),
+      points: v.number(),
+    })),
+    defaultDifficulty: v.string(),
+    // Which subject categories this template is best for
+    recommendedFor: v.array(v.string()),
+    isSystem: v.boolean(), // built-in vs custom
+    createdBy: v.optional(v.id("users")),
+  }).index("by_type", ["examType"])
+    .index("by_system", ["isSystem"]),
+
+  activitieslog: defineTable({
+    user: v.id("users"),
+    action: v.string(),
+    details: v.optional(v.string()),
+  }),
+
+  attendance: defineTable({
+    student: v.id("users"),
+    class: v.id("classes"),
+    date: v.string(),
+    status: v.union(v.literal("present"), v.literal("absent"), v.literal("late")),
+    remarks: v.optional(v.string()),
+  }).index("by_date_class", ["date", "class"])
+    .index("by_student", ["student"]),
+
+  assignments: defineTable({
+    title: v.string(),
+    description: v.string(),
+    subject: v.id("subjects"),
+    class: v.id("classes"),
+    teacher: v.id("users"),
+    dueDate: v.string(),
+    fileUrl: v.optional(v.string()),
+    maxPoints: v.optional(v.number()),
+  }),
+
+  assignmentSubmissions: defineTable({
+    assignment: v.id("assignments"),
+    student: v.id("users"),
+    content: v.string(),
+    fileUrl: v.optional(v.string()),
+    submittedAt: v.number(),
+    grade: v.optional(v.number()),
+    feedback: v.optional(v.string()),
+    aiFeedback: v.optional(v.string()),
+    status: v.union(v.literal("submitted"), v.literal("graded"), v.literal("returned")),
+  }).index("by_assignment", ["assignment"])
+    .index("by_student", ["student"]),
+
+  materials: defineTable({
+    title: v.string(),
+    description: v.string(),
+    subject: v.id("subjects"),
+    teacher: v.id("users"),
+    fileUrl: v.string(),
+    fileType: v.string(),
+    // For RAG / AI search
+    extractedText: v.optional(v.string()),
+  }).index("by_subject", ["subject"]),
+
+  fees: defineTable({
+    student: v.id("users"),
+    amount: v.number(),
+    dueDate: v.string(),
+    paidDate: v.optional(v.string()),
+    status: v.union(v.literal("paid"), v.literal("pending"), v.literal("overdue")),
+    academicYear: v.id("academicYears"),
+    description: v.optional(v.string()),
+  }).index("by_student", ["student"]),
+
+  expenses: defineTable({
+    title: v.string(),
+    amount: v.number(),
+    date: v.string(),
+    category: v.string(),
+    receipt: v.optional(v.string()),
+  }),
+
+  schoolSettings: defineTable({
+    name: v.string(),
+    address: v.string(),
+    phone: v.string(),
+    email: v.string(),
+    logo: v.optional(v.string()),
+    motto: v.optional(v.string()),
+    primaryColor: v.optional(v.string()),
+  }),
+
+  // ─── NEW TABLES ───────────────────────────────────────────────
+
+  notifications: defineTable({
+    recipient: v.id("users"),
+    title: v.string(),
+    message: v.string(),
+    isRead: v.boolean(),
+    type: v.string(), // "exam", "attendance", "fee", "assignment", "message", "badge", "announcement"
+    link: v.optional(v.string()),
+  }).index("by_recipient", ["recipient"])
+    .index("by_recipient_read", ["recipient", "isRead"]),
+
+  announcements: defineTable({
+    title: v.string(),
+    content: v.string(),
+    author: v.id("users"),
+    targetRoles: v.array(v.string()), // ["student", "teacher", "parent"] or ["all"]
+    priority: v.union(v.literal("low"), v.literal("normal"), v.literal("urgent")),
+    expiresAt: v.optional(v.string()),
+  }).index("by_priority", ["priority"]),
+
+  events: defineTable({
+    title: v.string(),
+    description: v.optional(v.string()),
+    date: v.string(),
+    endDate: v.optional(v.string()),
+    type: v.union(
+      v.literal("exam"),
+      v.literal("sports"),
+      v.literal("holiday"),
+      v.literal("meeting"),
+      v.literal("other")
+    ),
+    targetRoles: v.optional(v.array(v.string())),
+    createdBy: v.id("users"),
+  }).index("by_date", ["date"]),
+
+  badges: defineTable({
+    student: v.id("users"),
+    title: v.string(),
+    description: v.string(),
+    icon: v.string(),
+    category: v.string(), // "attendance", "academic", "participation"
+    awardedAt: v.number(),
+  }).index("by_student", ["student"]),
+
+  messages: defineTable({
+    sender: v.id("users"),
+    recipient: v.id("users"),
+    content: v.string(),
+    isRead: v.boolean(),
+    subject: v.optional(v.string()),
+    conversationId: v.string(), // sorted pair of user IDs: "id1_id2"
+  }).index("by_conversation", ["conversationId"])
+    .index("by_recipient_read", ["recipient", "isRead"]),
+
+  learningPaths: defineTable({
+    student: v.id("users"),
+    plan: v.string(), // JSON string from AI
+    generatedAt: v.number(),
+    academicYear: v.id("academicYears"),
+  }).index("by_student", ["student"]),
+
+  gradeInsights: defineTable({
+    exam: v.id("exams"),
+    teacher: v.id("users"),
+    summary: v.string(),
+    weakAreas: v.array(v.string()),
+    strongAreas: v.array(v.string()),
+    recommendedActions: v.array(v.string()),
+    generatedAt: v.number(),
+  }).index("by_exam", ["exam"]),
+
+  // ─── CAPS CURRICULUM & RESOURCE TABLES ────────────────────────
+
+  // Official South African languages
+  languages: defineTable({
+    name: v.string(),           // "English", "isiZulu", "Afrikaans", etc.
+    code: v.string(),           // "en", "zu", "af", etc.
+    isOfficial: v.boolean(),    // all 11 are official
+  }).index("by_code", ["code"]),
+
+  // CAPS-aligned subject definitions per grade
+  capsSubjects: defineTable({
+    name: v.string(),           // "Mathematics", "Life Skills", etc.
+    code: v.string(),           // "MATH", "LIFE-SKILLS"
+    grade: v.number(),          // 1-12
+    phase: v.string(),          // "Foundation", "Intermediate", "Senior", "FET"
+    description: v.optional(v.string()),
+    isCompulsory: v.boolean(),
+    isLanguage: v.boolean(),    // true for language subjects
+  }).index("by_grade", ["grade"])
+    .index("by_code_grade", ["code", "grade"]),
+
+  // Syllabus topics per subject per grade
+  syllabusTopics: defineTable({
+    capsSubject: v.id("capsSubjects"),
+    grade: v.number(),
+    term: v.number(),           // 1-4
+    topic: v.string(),          // "Numbers, Operations and Relationships"
+    subTopics: v.array(v.string()), // ["Counting", "Addition", "Subtraction"]
+    contentOutline: v.string(), // Detailed CAPS content description
+    hoursPerTerm: v.number(),   // suggested teaching hours
+    language: v.string(),       // "en", "zu", "af" etc — the language of this content
+  }).index("by_subject_term", ["capsSubject", "term"])
+    .index("by_grade_language", ["grade", "language"]),
+
+  // Past exam papers
+  pastPapers: defineTable({
+    title: v.string(),          // "Grade 12 Mathematics Paper 1 — November 2024"
+    grade: v.number(),
+    subject: v.id("capsSubjects"),
+    language: v.string(),       // language code
+    year: v.number(),
+    term: v.number(),           // 1-4, or 0 for full-year
+    paperType: v.string(),      // "exam", "test", "assignment", "memo"
+    fileUrl: v.string(),
+    fileType: v.string(),       // "pdf", "docx"
+    fileSize: v.number(),       // bytes
+    extractedText: v.optional(v.string()), // OCR'd text for AI search
+    uploadedBy: v.id("users"),
+    isPublished: v.boolean(),   // only visible when published
+    tags: v.array(v.string()),  // ["calculus", "trigonometry", "exam"]
+  }).index("by_grade_subject", ["grade", "subject"])
+    .index("by_year", ["year"])
+    .index("by_published", ["isPublished"]),
+
+  // Study materials / teaching resources (admin-uploaded)
+  studyResources: defineTable({
+    title: v.string(),
+    description: v.string(),
+    grade: v.number(),
+    subject: v.id("capsSubjects"),
+    language: v.string(),
+    resourceType: v.string(),   // "notes", "worksheet", "video", "presentation", "textbook"
+    fileUrl: v.string(),
+    fileType: v.string(),
+    fileSize: v.number(),
+    extractedText: v.optional(v.string()),
+    uploadedBy: v.id("users"),
+    isPublished: v.boolean(),
+    tags: v.array(v.string()),
+  }).index("by_grade_subject", ["grade", "subject"])
+    .index("by_type", ["resourceType"])
+    .index("by_published", ["isPublished"]),
+
+  // AI-generated exam drafts linked to syllabus
+  generatedExams: defineTable({
+    title: v.string(),
+    grade: v.number(),
+    subject: v.id("capsSubjects"),
+    language: v.string(),
+    term: v.number(),
+    questions: v.array(
+      v.object({
+        questionText: v.string(),
+        type: v.union(v.literal("MCQ"), v.literal("SHORT_ANSWER"), v.literal("ESSAY")),
+        options: v.optional(v.array(v.string())),
+        correctAnswer: v.string(),
+        points: v.number(),
+        topic: v.string(),      // which syllabus topic this tests
+        difficulty: v.string(), // "easy", "medium", "hard"
+      })
+    ),
+    totalPoints: v.number(),
+    duration: v.number(),       // minutes
+    generatedBy: v.id("users"),
+    basedOnTopics: v.array(v.id("syllabusTopics")),
+    isFinalized: v.boolean(),
+  }).index("by_grade_subject", ["grade", "subject"])
+    .index("by_generated_by", ["generatedBy"]),
+});
