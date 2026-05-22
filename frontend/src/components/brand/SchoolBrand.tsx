@@ -10,17 +10,15 @@ export function SchoolBrand({ to = "/", compact = false }: SchoolBrandProps) {
     <img
       src="/logo-school.jpeg"
       alt="Vhembe Rising Star Academy logo"
-      className={compact ? "size-9 rounded-md border border-red-200 bg-white object-cover" : "size-20 rounded-md border border-red-200 bg-white object-cover shadow-sm"}
+      className={compact ? "w-12 h-12 rounded-md object-cover" : "w-20 h-20 rounded-md object-cover"}
     />
   );
 
   if (!to) {
-    return <div className="flex items-center gap-3">{content}</div>;
+    return <div>{content}</div>;
   }
 
   return (
-    <Link to={to} className="flex items-center gap-3">
-      {content}
-    </Link>
+    <Link to={to}>{content}</Link>
   );
 }
