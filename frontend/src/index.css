@@ -185,6 +185,18 @@ body {
   letter-spacing: var(--tracking-normal);
 }
 
+html,
+html.dark,
+body,
+#root {
+  background: #ffffff !important;
+  color: #171717;
+}
+
+html.dark {
+  color-scheme: light;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

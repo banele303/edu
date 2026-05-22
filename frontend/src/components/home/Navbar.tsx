@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router";
+import { SchoolBrand } from "@/components/brand/SchoolBrand";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,16 +21,7 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img
-              src="/logo-school.jpeg"
-              alt="Vhembe Rising Star Academy logo"
-              className="size-11 rounded-md border border-red-200 bg-white object-cover shadow-sm"
-            />
-            <span className="text-lg sm:text-xl font-black tracking-normal text-gray-950">
-              Vhembe <span className="text-[#dc2626]">Rising Star</span> Academy
-            </span>
-          </div>
+          <SchoolBrand />
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-6">

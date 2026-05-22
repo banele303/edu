@@ -1,6 +1,7 @@
 import UniversalUserForm from "@/components/auth/UniversalUserForm";
+import { SchoolBrand } from "@/components/brand/SchoolBrand";
 import { useAuth } from "@/hooks/AuthProvider";
-import { Link, Navigate } from "react-router";
+import { Navigate } from "react-router";
 import { useState } from "react";
 
 const Login = () => {
@@ -18,16 +19,7 @@ const Login = () => {
       {/* Left Panel */}
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
-          <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-            <img
-              src="/logo-school.jpeg"
-              alt="Vhembe Rising Star Academy logo"
-              className="size-9 rounded-md border border-red-200 bg-white object-cover"
-            />
-            <span>
-              Vhembe<span className="text-[#dc2626]"> Rising Star</span> Academy
-            </span>
-          </Link>
+          <SchoolBrand compact />
         </div>
 
         <div className="flex flex-1 items-center justify-center">
