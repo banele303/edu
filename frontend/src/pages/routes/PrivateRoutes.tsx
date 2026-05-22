@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { StudyBuddy } from "@/components/ai/StudyBuddy";
 import { GlobalSearch } from "@/components/global/GlobalSearch";
+import { SchoolBrand } from "@/components/brand/SchoolBrand";
 
 const PrivateRoutes = () => {
   const { loading, user, year, signOut } = useAuth();
@@ -50,6 +51,9 @@ const PrivateRoutes = () => {
         <header className="flex h-14 shrink-0 items-center gap-2 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/90 px-4 sticky top-0 z-10">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
+          <div className="hidden min-w-0 shrink-0 md:block">
+            <SchoolBrand compact />
+          </div>
           <GlobalSearch />
           <div className="flex-1" />
           <NotificationBell />
