@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, FileText, Download, Plus } from "lucide-react";
 import { FileUpload } from "@/components/global/FileUpload";
+import { ingestMaterial } from "@/lib/cloudflareWorker";
+import type { UploadResult } from "@/lib/cloudflareWorker";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/AuthProvider";
 
@@ -19,40 +21,75 @@ export default function MaterialsPage() {
   const [description, setDescription] = useState("");
   const [subjectId, setSubjectId] = useState<string>("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [extractedText, setExtractedText] = useState<string>("");
+  const [objectKey, setObjectKey] = useState<string | null>(null);
+  const [uploadFilename, setUploadFilename] = useState("");
+  const [contentType, setContentType] = useState("application/octet-stream");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const materials = useQuery(api.lms.getMaterials, {});
   const subjects = useQuery(api.subjects.getSubjects);
   const createMaterial = useMutation(api.lms.createMaterial);
+  const updateMaterialExtractedText = useMutation(api.lms.updateMaterialExtractedText);
 
-  const handleUploadComplete = (url: string, text?: string) => {
-    setFileUrl(url);
-    if (text) setExtractedText(text);
+  const handleUploadComplete = (result: UploadResult) => {
+    setFileUrl(result.fileUrl);
+    setObjectKey(result.objectKey);
+    setContentType(result.contentType);
+    const name = result.objectKey.includes("-")
+      ? result.objectKey.slice(result.objectKey.indexOf("-") + 1)
+      : result.objectKey;
+    setUploadFilename(name);
+  };
+
+  const clearUpload = () => {
+    setFileUrl(null);
+    setObjectKey(null);
+    setUploadFilename("");
+    setContentType("application/octet-stream");
   };
 
   const handleSubmit = async () => {
-    if (!title || !subjectId || !fileUrl) {
+    if (!title || !subjectId || !fileUrl || !objectKey) {
       return toast.error("Please fill in all fields and upload a file.");
     }
 
     setIsSubmitting(true);
     try {
-      await createMaterial({
+      const materialId = await createMaterial({
         title,
         description,
         subjectId: subjectId as any,
         fileUrl,
-        extractedText,
       });
-      toast.success("Material uploaded successfully!");
+
+      try {
+        const { extractedTextPreview, chunkCount } = await ingestMaterial({
+          objectKey,
+          filename: uploadFilename,
+          contentType,
+          subjectId,
+          materialId: materialId as string,
+          title,
+          description,
+        });
+        if (extractedTextPreview) {
+          await updateMaterialExtractedText({
+            materialId,
+            extractedText: extractedTextPreview,
+          });
+        }
+        toast.success(`Material saved and indexed (${chunkCount} chunks for search).`);
+      } catch (ingestError: unknown) {
+        const msg =
+          ingestError instanceof Error ? ingestError.message : "Indexing failed";
+        toast.warning(`Material saved, but semantic indexing failed: ${msg}`);
+      }
+
       setOpen(false);
-      // Reset form
       setTitle("");
       setDescription("");
       setSubjectId("");
-      setFileUrl(null);
-      setExtractedText("");
+      clearUpload();
     } catch (e: any) {
       toast.error(e.message || "Failed to save material.");
     } finally {
@@ -114,14 +151,24 @@ export default function MaterialsPage() {
                 <div className="space-y-2">
                   <Label>File Upload (Cloudflare R2)</Label>
                   {!fileUrl ? (
-                    <FileUpload onUploadComplete={handleUploadComplete} accept=".pdf,.doc,.docx,.txt" />
+                    <FileUpload
+                      onUploadComplete={handleUploadComplete}
+                      accept=".pdf,.txt,.md"
+                      metadata={{
+                        subjectId: subjectId || undefined,
+                        title: title || undefined,
+                        description: description || undefined,
+                      }}
+                    />
                   ) : (
                     <div className="p-4 border rounded-md bg-muted/50 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-medium">File uploaded successfully</span>
+                        <span className="text-sm font-medium">File uploaded to R2</span>
                       </div>
-                      <Button variant="ghost" size="sm" onClick={() => setFileUrl(null)}>Change</Button>
+                      <Button variant="ghost" size="sm" onClick={clearUpload}>
+                        Change
+                      </Button>
                     </div>
                   )}
                 </div>

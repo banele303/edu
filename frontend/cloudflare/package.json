@@ -9,7 +9,8 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
-    "hono": "^4.2.0"
+    "hono": "^4.2.0",
+    "unpdf": "^0.12.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260516.1",
