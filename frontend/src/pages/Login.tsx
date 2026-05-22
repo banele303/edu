@@ -25,7 +25,7 @@ const Login = () => {
               className="size-9 rounded-md border border-red-200 bg-white object-cover"
             />
             <span>
-              Vhembe<span className="text-[#dc2626]"> Rising Star</span>
+              Vhembe<span className="text-[#dc2626]"> Rising Star</span> Academy
             </span>
           </Link>
         </div>

@@ -26,8 +26,8 @@ const Navbar = () => {
               alt="Vhembe Rising Star Academy logo"
               className="size-11 rounded-md border border-red-200 bg-white object-cover shadow-sm"
             />
-            <span className="text-xl sm:text-2xl font-black tracking-normal text-gray-950">
-              Vhembe <span className="text-[#dc2626]">Rising Star</span>
+            <span className="text-lg sm:text-xl font-black tracking-normal text-gray-950">
+              Vhembe <span className="text-[#dc2626]">Rising Star</span> Academy
             </span>
           </div>
 

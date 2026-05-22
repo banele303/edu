@@ -33,7 +33,6 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ThemeToogle } from "./ThemeToogle";
 
 export interface NavItem {
   title: string;
@@ -229,7 +228,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <LogOut />
             </Button>
           </SidebarMenuItem>
-          <ThemeToogle />
         </div>
         <NavUser user={userData} />
       </SidebarFooter>
